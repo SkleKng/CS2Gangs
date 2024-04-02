@@ -1,0 +1,6 @@
+{
+  "ClientPrefsDBConnectionString": "Server=server.com;Database=database;user=user;password=pass;port=3306",
+  "JailbreakDBConnectionString": "Server=server.com;Database=database;user=user;password=pass;port=3306",
+  "DebugPermission": "@css/rcon",
+  "GangsCreationPrice": 200
+}

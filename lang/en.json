@@ -1,0 +1,15 @@
+{
+  "prefix": "{lightpurple}[{purple}GANGS{lightpurple}]",
+  "command_usage": "%prefix% {red}Usage: {0}",
+  "command_execute_in_game": "This command can only be ran in-game",
+  "command_error": "%prefix% {red}The following error occured: {0}",
+  "command_no_permission": "%prefix {red}You do not have permission to execute this command!",
+  "command_gangcreation_explain": "%prefix% {green}To create a gang, type /gangcreate (name)",
+  "command_gangcreation_nameexists": "%prefix% {red}A gang with this name already exists! Choose a different name!",
+  "command_gangcreation_success": "%prefix% {green}Gang {0} has been created!",
+  "command_gangleave_success": "%prefix% {green}You have left {0}!",
+  "command_gangdisband_success": "%prefix% {green}You have disbanded {0}!",
+  "command_setcredits_success": "%prefix% {green}Set {0}'s credits to {1}",
+  "command_credits": "%prefix% {white}You have {green}{0} {white}credits!",
+  "command_credits_other": "%prefix% {white}{0} has {green}{1} {white}credits!"
+}
