@@ -55,6 +55,14 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
 
         commands.Add("css_credits", new CreditsCmd(this));
 
+        //Member shit
+        commands.Add("css_gangmembers", new GangMembersCmd(this));
+        commands.Add("css_gangmember", new GangMemberCmd(this));
+        commands.Add("css_gangpromote", new GangPromoteCmd(this));
+        commands.Add("css_gangdemote", new GangDemoteCmd(this));
+        commands.Add("css_gangkick", new GangKickCmd(this));
+        commands.Add("css_gangtransfer", new GangTransferCmd(this));
+
         // Debug commands
         commands.Add("css_gangdebug", new GangDebugCmd(this));
         commands.Add("css_setcredits", new SetCreditsCmd(this));

@@ -11,5 +11,9 @@
   "command_gangdisband_success": "%prefix% {green}You have disbanded {0}!",
   "command_setcredits_success": "%prefix% {green}Set {0}'s credits to {1}",
   "command_credits": "%prefix% {white}You have {green}{0} {white}credits!",
-  "command_credits_other": "%prefix% {white}{0} has {green}{1} {white}credits!"
+  "command_credits_other": "%prefix% {white}{0} has {green}{1} {white}credits!",
+  "command_gangdemote_success": "%prefix% {green}Demoted {0} to member!",
+  "command_gangpromote_success": "%prefix% {green}Promoted {0} to officer!",
+  "command_gangtransfer_success": "%prefix% {green}Transferred gang ownership to {0}!",
+  "command_gangkick_success": "%prefix% {green}Kicked {0} from the gang!"
 }

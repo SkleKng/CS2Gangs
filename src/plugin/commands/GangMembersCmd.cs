@@ -2,6 +2,7 @@ using api.plugin;
 using api.plugin.models;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Menu;
 using plugin.extensions;
 using plugin.menus;
@@ -10,7 +11,7 @@ using plugin.utils;
 
 namespace plugin.commands;
 
-public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
+public class GangMembersCmd(ICS2Gangs gangs) : Command(gangs)
 {
     public override void OnCommand(CCSPlayerController? executor, CommandInfo info)
     {
@@ -21,19 +22,6 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
         }
         if (!executor.IsReal())
             return;
-
-        if(info.ArgCount <= 1) {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangcreation_explain"); // printlocalizedchat for menu callback
-            return;
-        }
-
-        string name = info.GetArg(1);
-
-        if (gangs.GetGangsService().GangNameExists(name).GetAwaiter().GetResult())
-        {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangcreation_nameexists");
-            return;
-        }
 
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
@@ -52,26 +40,34 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
                 "You were not found in the database. Try again in a few seconds.");
             return;
         }
-        if (gangPlayer.GangId != null) {
+        if (gangPlayer.GangId == null) {
             info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
-                "You are already in a gang. Leave your current gang to create a new one.");
+                "You are not in a gang.");
             return;
         }
 
-        if (gangPlayer.Credits < gangs.Config.GangCreationPrice)
+        Gang? gang = gangs.GetGangsService().GetGang(gangPlayer.GangId.Value).GetAwaiter().GetResult();
+
+        if (gang == null)
         {
             info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
-                "You do not have enough credits to create a gang.");
+                "Your gang was not found in the database. Try again in a few seconds.");
             return;
         }
 
-        Gang newGang = new Gang(gangs.GetGangsService().GetNextGangId().GetAwaiter().GetResult(), name);
-        gangPlayer.GangId = newGang.Id;
-        gangPlayer.InvitedBy = gangPlayer.PlayerName;
-        gangPlayer.GangRank = (int?)GangRank.Owner;
-        gangPlayer.Credits -= gangs.Config.GangCreationPrice;
-        gangs.GetGangsService().PushGangUpdate(newGang);
-        gangs.GetGangsService().PushPlayerUpdate(gangPlayer);
-        info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangcreation_success", name);
+        if (gangPlayer.GangRank == (int?)GangRank.Owner)
+        {
+            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                "You are the owner of the gang. You must transfer ownership before leaving.");
+            return;
+        }
+
+        var menu = new GangMenuMembers(
+            gangs,
+            gangs.GetGangsService(),
+            gang,
+            gangPlayer);
+
+        MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
     }
 }

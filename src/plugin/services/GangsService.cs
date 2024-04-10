@@ -17,7 +17,7 @@ public class GangsService : IGangsService
 
     public async Task<Gang?> GetGang(int gangid)
     {
-        using (var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString))
+        using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 
@@ -28,7 +28,7 @@ public class GangsService : IGangsService
 
     public async Task<GangPlayer?> GetGangPlayer(ulong steamid)
     {
-        using (var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString))
+        using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 
@@ -47,7 +47,7 @@ public class GangsService : IGangsService
 
     public async Task<IEnumerable<GangPlayer>> GetGangMembers(int gangid)
     {
-        using var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString);
+        using var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString);
         conn.Open();
 
         return await conn.QueryAsync<GangPlayer>("SELECT * FROM cs2_gangs_players WHERE gangid = @gangid", new { gangid });
@@ -55,7 +55,7 @@ public class GangsService : IGangsService
 
     public async Task<bool> GangNameExists(string name)
     {
-        using var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString);
+        using var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString);
         conn.Open();
 
         return await conn.ExecuteScalarAsync<bool>("SELECT COUNT(*) FROM cs2_gangs_gangs WHERE name = @name", new { name });
@@ -63,7 +63,7 @@ public class GangsService : IGangsService
 
     public async Task<int> GetNextGangId()
     {
-        using var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString);
+        using var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString);
         conn.Open();
 
         string query = "SHOW TABLE STATUS LIKE 'cs2_gangs_gangs'";
@@ -73,7 +73,7 @@ public class GangsService : IGangsService
 
     public async void DisbandGang(Gang gang)
     {
-        using var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString);
+        using var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString);
         conn.Open();
 
         await conn.ExecuteAsync("DELETE FROM cs2_gangs_gangs WHERE id = @Id", gang);
@@ -82,7 +82,7 @@ public class GangsService : IGangsService
 
     public async void PushGangUpdate(Gang gang)
     {
-        using var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString);
+        using var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString);
         conn.Open();
 
         await conn.ExecuteAsync(
@@ -92,7 +92,7 @@ public class GangsService : IGangsService
 
     public async void PushPlayerUpdate(GangPlayer player)
     {
-        using var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString);
+        using var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString);
         conn.Open();
 
         await conn.ExecuteAsync(
@@ -102,7 +102,7 @@ public class GangsService : IGangsService
 
     private async Task<bool> playerExists(ulong steamid)
     {
-        using (var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString))
+        using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 
@@ -117,7 +117,7 @@ public class GangsService : IGangsService
 
     private async void createNewGangPlayer(ulong steamid, string playername)
     {
-        using (var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString))
+        using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 
@@ -131,7 +131,7 @@ public class GangsService : IGangsService
 
     private async void updateTimeStamp(ulong steamid)
     {
-        using (var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString))
+        using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 
@@ -144,7 +144,7 @@ public class GangsService : IGangsService
 
     private async void createTables()
     {
-        using (var conn = new MySqlConnection(CS2Gangs.Config!.JailbreakDBConnectionString))
+        using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 

@@ -7,6 +7,7 @@ using CounterStrikeSharp.API.Modules.Menu;
 using plugin.extensions;
 using plugin.menus;
 using plugin.services;
+using plugin.utils;
 
 namespace plugin.commands;
 
@@ -54,7 +55,7 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        if (gangPlayer.GangRank == 2) // owner
+        if (gangPlayer.GangRank == (int?)GangRank.Owner)
         {
             info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
                 "You are the owner of the gang. You must transfer ownership before leaving.");
@@ -62,7 +63,7 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
         }
 
         gangPlayer.GangId = null;
-        gangPlayer.GangRank = 0;
+        gangPlayer.GangRank = (int)GangRank.Member;
         gangPlayer.InvitedBy = null;
         info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangleave_success", gang.Name);
     }

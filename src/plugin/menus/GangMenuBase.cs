@@ -4,6 +4,7 @@ using api.plugin.services;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Menu;
 using plugin.services;
+using plugin.utils;
 
 namespace plugin.menus;
 
@@ -19,11 +20,16 @@ public class GangMenuBase(ICS2Gangs gangs, IGangsService gangService, Gang? gang
         }
 
         menu = new ChatMenu($"{gang.Name} - Gang Menu");
-        menu.AddMenuOption("View Gang Perks", generateCommandAction($"css_gang_perks {gang.Id}"));
-        menu.AddMenuOption("View Gang Members", generateCommandAction($"css_gang_members {gang.Id}"));
-        menu.AddMenuOption("Leave Gang", generateCommandAction($"css_gang_leave {gang.Id}"));
+        // menu.AddMenuOption("View Gang Perks", generateCommandAction($"css_gangperks"));
+        menu.AddMenuOption("View Gang Members", generateCommandAction($"css_gangmembers"));
+
+        if(player.GangRank < (int?)GangRank.Owner) { 
+            menu.AddMenuOption("Leave Gang", generateCommandAction($"css_gangleave"));
+        }
+        else {
+            menu.AddMenuOption("Disband Gang", generateCommandAction($"css_gangdisband"));
+        }
         return menu;
-        
     }
 
     private Action<CCSPlayerController, ChatMenuOption> generateCommandAction(string cmd)

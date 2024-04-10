@@ -7,11 +7,10 @@ using CounterStrikeSharp.API.Modules.Menu;
 using plugin.extensions;
 using plugin.menus;
 using plugin.services;
-using plugin.utils;
 
 namespace plugin.commands;
 
-public class GangDisbandCmd(ICS2Gangs gangs) : Command(gangs)
+public class GangMemberCmd(ICS2Gangs gangs) : Command(gangs)
 {
     public override void OnCommand(CCSPlayerController? executor, CommandInfo info)
     {
@@ -55,14 +54,46 @@ public class GangDisbandCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        if (gangPlayer.GangRank != (int?)GangRank.Owner)
+        if(!ulong.TryParse(info.GetArg(0), out ulong targetSteamId))
         {
             info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
-                "You are not the owner of the gang!");
+                "Invalid SteamID.");
             return;
         }
 
-        gangs.GetGangsService().DisbandGang(gang);
-        info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangdisband_success", gang.Name);
+        GangPlayer? menuPlayer = gangs.GetGangsService().GetGangPlayer(targetSteamId).GetAwaiter().GetResult();
+
+        if (menuPlayer == null)
+        {
+            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                "Player not found in the database.");
+            return;
+        }
+
+        if (menuPlayer.GangId == null)
+        {
+            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                "Player is not in a gang.");
+            return;
+        }
+
+        Gang? menuGang = gangs.GetGangsService().GetGang(menuPlayer.GangId.Value).GetAwaiter().GetResult();
+
+        if (menuGang == null)
+        {
+            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                "Player's gang was not found in the database.");
+            return;
+        }
+
+        var menu = new GangMenuMember(
+            gangs,
+            gangs.GetGangsService(),
+            gang,
+            gangPlayer,
+            menuGang,
+            menuPlayer);
+
+        MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
     }
 }
