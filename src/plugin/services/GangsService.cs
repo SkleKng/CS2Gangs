@@ -1,6 +1,7 @@
 using api.plugin.models;
 using api.plugin.services;
 using Dapper;
+using Microsoft.Extensions.Logging;
 using MySqlConnector;
 
 namespace plugin.services;
@@ -144,6 +145,8 @@ public class GangsService : IGangsService
 
     private async void createTables()
     {
+        CS2Gangs.GetBase().Logger.LogInformation($"Attempting to establish connection using the following connection string: {CS2Gangs.Config!.DBConnectionString}");
+
         using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();

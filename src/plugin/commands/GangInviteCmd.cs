@@ -2,6 +2,7 @@ using api.plugin;
 using api.plugin.models;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Commands.Targeting;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Menu;
 using plugin.extensions;
@@ -11,7 +12,7 @@ using plugin.utils;
 
 namespace plugin.commands;
 
-public class GangPromoteCmd(ICS2Gangs gangs) : Command(gangs)
+public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
 {
     public override void OnCommand(CCSPlayerController? executor, CommandInfo info)
     {
@@ -55,14 +56,29 @@ public class GangPromoteCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        if(!ulong.TryParse(info.GetArg(1), out ulong targetSteamId))
+        TargetResult? targetResult = GetTarget(info);
+        if(targetResult == null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Invalid SteamID.");
+                "Player not found.");
             return;
         }
 
-        GangPlayer? targetPlayer = gangs.GetGangsService().GetGangPlayer(targetSteamId).GetAwaiter().GetResult();
+        if(targetResult.Count() > 1)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "Multiple players found. Be more specific.");
+            return;
+        }
+        var target = targetResult.First();
+        if(target.AuthorizedSteamID == null)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "Player has no authorized SteamID.");
+            return;
+        }
+
+        GangPlayer? targetPlayer = gangs.GetGangsService().GetGangPlayer(target.AuthorizedSteamID.SteamId64).GetAwaiter().GetResult();
 
         if (targetPlayer == null)
         {
@@ -71,53 +87,31 @@ public class GangPromoteCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        if (targetPlayer.GangId == null)
+        if (targetPlayer.GangId != null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Player is not in a gang.");
+                "Player is already in a gang.");
             return;
         }
 
-        Gang? targetGang = gangs.GetGangsService().GetGang(targetPlayer.GangId.Value).GetAwaiter().GetResult();
-
-        if (targetGang == null)
+        if (senderPlayer.GangRank == (int?)GangRank.Member)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Player's gang was not found in the database.");
-            return;
-        }
-
-        if (senderPlayer.GangRank != (int?)GangRank.Owner)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You must be the owner of the gang to promote a member.");
-            return;
-        }
-
-        if (senderPlayer.GangId != targetPlayer.GangId)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Player is not in your gang.");
+                "You must be at least an officer of the gang to invite a member.");
             return;
         }
 
         if (senderPlayer.SteamId == targetPlayer.SteamId)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You cannot promote yourself!.");
+                "You cannot invite yourself!.");
             return;
         }
 
-        if (targetPlayer.GangRank == (int?)GangRank.Officer)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Player is already an officer. Use the transfer ownership command to transfer ownership.");
-            return;
-        }
+        gangs.GetGangInvites().Add(senderPlayer, targetPlayer);
 
-        targetPlayer.GangRank = (int)GangRank.Officer;
-
-        gangs.GetGangsService().PushPlayerUpdate(targetPlayer);
+        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_success", targetPlayer.PlayerName ?? "Unknown");
+        target.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_target", senderPlayer.PlayerName ?? "Unknown", senderGang.Name ?? "Unknown");
 
         executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangpromote_success", targetPlayer.PlayerName ?? "Unknown");
     }

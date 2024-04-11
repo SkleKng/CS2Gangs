@@ -23,7 +23,7 @@ public class CreditsCmd(ICS2Gangs gangs) : Command(gangs)
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
@@ -35,19 +35,19 @@ public class CreditsCmd(ICS2Gangs gangs) : Command(gangs)
 
             if (playerInfo == null)
             {
-                info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                     "You were not found in the database. Try again in a few seconds.");
                 return;
             }
 
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_credits", playerInfo.Credits);
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_credits", playerInfo.Credits);
             return;
         }
 
         TargetResult? target = GetTarget(info);
         if (target == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error", "Player not found.");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "Player not found.");
             return;
         }
 
@@ -58,12 +58,12 @@ public class CreditsCmd(ICS2Gangs gangs) : Command(gangs)
 
             if (playerInfo == null)
             {
-                info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                     "Could not load information for player. Try again in a few seconds.");
                 return;
             }
 
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_credits_other", player.PlayerName, playerInfo.Credits);
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_credits_other", player.PlayerName, playerInfo.Credits);
         }
     }
 }

@@ -26,7 +26,7 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
@@ -36,12 +36,12 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (gangPlayer == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You were not found in the database. Try again in a few seconds.");
             return;
         }
         if (gangPlayer.GangId == null) {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You are not in a gang.");
             return;
         }
@@ -50,14 +50,14 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (gang == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Your gang was not found in the database. Try again in a few seconds.");
             return;
         }
 
         if (gangPlayer.GangRank == (int?)GangRank.Owner)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You are the owner of the gang. You must transfer ownership before leaving.");
             return;
         }
@@ -65,6 +65,9 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
         gangPlayer.GangId = null;
         gangPlayer.GangRank = (int)GangRank.Member;
         gangPlayer.InvitedBy = null;
-        info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangleave_success", gang.Name);
+
+        gangs.GetGangsService().PushPlayerUpdate(gangPlayer);
+
+        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangleave_success", gang.Name);
     }
 }

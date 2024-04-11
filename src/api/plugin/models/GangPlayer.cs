@@ -1,7 +1,7 @@
 namespace api.plugin.models;
 
 public class GangPlayer(
-    ulong steamId,
+    long steamId,
     string? playerName,
     int? gangId,
     int? gangRank,
@@ -17,7 +17,7 @@ public class GangPlayer(
     int lifetimeRebelKills,
     DateTime lastJoin)
 {
-    public ulong SteamId { get; } = steamId;
+    public long SteamId { get; } = steamId;
     public string? PlayerName { get; set; } = playerName;
     public int? GangId { get; set; } = gangId;
     public int? GangRank { get; set; } = gangRank;

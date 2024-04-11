@@ -2,15 +2,17 @@ using api.plugin;
 using api.plugin.models;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Commands.Targeting;
 using CounterStrikeSharp.API.Modules.Entities;
 using CounterStrikeSharp.API.Modules.Menu;
 using plugin.extensions;
 using plugin.menus;
 using plugin.services;
+using plugin.utils;
 
 namespace plugin.commands;
 
-public class GangMemberCmd(ICS2Gangs gangs) : Command(gangs)
+public class GangJoinCommand(ICS2Gangs gangs) : Command(gangs)
 {
     public override void OnCommand(CCSPlayerController? executor, CommandInfo info)
     {
@@ -30,70 +32,74 @@ public class GangMemberCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        GangPlayer? gangPlayer = gangs.GetGangsService().GetGangPlayer(steam.SteamId64).GetAwaiter()
+        GangPlayer? senderPlayer = gangs.GetGangsService().GetGangPlayer(steam.SteamId64).GetAwaiter()
             .GetResult();
 
-        if (gangPlayer == null)
+        if (senderPlayer == null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You were not found in the database. Try again in a few seconds.");
             return;
         }
-        if (gangPlayer.GangId == null) {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You are not in a gang.");
-            return;
-        }
-
-        Gang? gang = gangs.GetGangsService().GetGang(gangPlayer.GangId.Value).GetAwaiter().GetResult();
-
-        if (gang == null)
+        
+        if (senderPlayer.GangId != null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Your gang was not found in the database. Try again in a few seconds.");
+                "You are already in a gang.");
             return;
         }
 
-        if(!ulong.TryParse(info.GetArg(1), out ulong targetSteamId))
+        TargetResult? targetResult = GetTarget(info);
+        if(targetResult == null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Invalid SteamID.");
+                "Player not found.");
             return;
         }
 
-        GangPlayer? menuPlayer = gangs.GetGangsService().GetGangPlayer(targetSteamId).GetAwaiter().GetResult();
+        if(targetResult.Count() > 1)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "Multiple players found. Be more specific.");
+            return;
+        }
+        var target = targetResult.First();
 
-        if (menuPlayer == null)
+        if(target.AuthorizedSteamID == null)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "Player has no authorized SteamID.");
+            return;
+        }
+
+        GangPlayer? targetPlayer = gangs.GetGangsService().GetGangPlayer(target.AuthorizedSteamID.SteamId64).GetAwaiter().GetResult();
+        if (targetPlayer == null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Player not found in the database.");
             return;
         }
 
-        if (menuPlayer.GangId == null)
-        {
+        if(gangs.GetGangInvites()[targetPlayer] != senderPlayer) {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Player is not in a gang.");
+                "You have not been invited to a gang by this player!");
             return;
         }
 
-        Gang? menuGang = gangs.GetGangsService().GetGang(menuPlayer.GangId.Value).GetAwaiter().GetResult();
-
-        if (menuGang == null)
+        Gang? targetGang = gangs.GetGangsService().GetGang(targetPlayer.GangId.Value).GetAwaiter().GetResult();
+        if (targetGang == null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Player's gang was not found in the database.");
+                "Player's gang was not found in the database. This really shouldn't happen, contact TechLE if it does.");
             return;
         }
 
-        var menu = new GangMenuMember(
-            gangs,
-            gangs.GetGangsService(),
-            gang,
-            gangPlayer,
-            menuGang,
-            menuPlayer);
+        senderPlayer.GangId = targetPlayer.GangId;
+        senderPlayer.GangRank = (int?)GangRank.Member;
+        senderPlayer.InvitedBy = targetPlayer.PlayerName;
 
-        MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangjoin_success", targetGang.Name);
+
+        gangs.GetGangsService().PushPlayerUpdate(senderPlayer);
     }
 }

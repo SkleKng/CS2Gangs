@@ -12,8 +12,11 @@
   "command_setcredits_success": "%prefix% {green}Set {0}'s credits to {1}",
   "command_credits": "%prefix% {white}You have {green}{0} {white}credits!",
   "command_credits_other": "%prefix% {white}{0} has {green}{1} {white}credits!",
-  "command_gangdemote_success": "%prefix% {green}Demoted {0} to member!",
-  "command_gangpromote_success": "%prefix% {green}Promoted {0} to officer!",
+  "command_gangdemote_success": "%prefix% {green}Demoted {0} to Member!",
+  "command_gangpromote_success": "%prefix% {green}Promoted {0} to Officer!",
   "command_gangtransfer_success": "%prefix% {green}Transferred gang ownership to {0}!",
-  "command_gangkick_success": "%prefix% {green}Kicked {0} from the gang!"
+  "command_gangkick_success": "%prefix% {green}Kicked {0} from the gang!",
+  "command_ganginvite_success": "%prefix% {green}Invited {0} to the gang!",
+  "command_ganginvite_target": "%prefix% {green}{0} has invited you to join {1}! Type /gangjoin {0} to join!",
+  "command_gangjoin_success": "%prefix% {green}You have successfully joined {0}!",
 }

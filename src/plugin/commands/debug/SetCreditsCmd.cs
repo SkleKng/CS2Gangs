@@ -24,18 +24,18 @@ public class SetCreditsCmd(ICS2Gangs gangs) : Command(gangs)
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
         if (!AdminManager.PlayerHasPermissions(executor, gangs.Config.DebugPermission!))
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error", "You do not have permission to use this command.");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "You do not have permission to use this command.");
             return;
         }
 
         if(info.ArgCount <= 1) {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "usage", "css_setcredits <player> (credits)");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "usage", "css_setcredits <player> (credits)");
             return;
         }
 
@@ -45,7 +45,7 @@ public class SetCreditsCmd(ICS2Gangs gangs) : Command(gangs)
         if (info.ArgCount <= 2)
         {
             if(!int.TryParse(info.GetArg(1), out credits)) {
-                info.ReplyLocalized(gangs.GetBase().Localizer, "command_error", "Invalid credits amount.");
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "Invalid credits amount.");
                 return;
             }
             GangPlayer? playerInfo = gangs.GetGangsService().GetGangPlayer(steam.SteamId64).GetAwaiter()
@@ -53,26 +53,26 @@ public class SetCreditsCmd(ICS2Gangs gangs) : Command(gangs)
 
             if (playerInfo == null)
             {
-                info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                     "You were not found in the database. Try again in a few seconds.");
                 return;
             }
 
             playerInfo.Credits = credits;
             gangs.GetGangsService().PushPlayerUpdate(playerInfo);
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_setcredits_success", executor.PlayerName, playerInfo.Credits);
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_setcredits_success", executor.PlayerName, playerInfo.Credits);
             return;
         }
 
         TargetResult? target = GetTarget(info);
         if (target == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error", "Player not found.");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "Player not found.");
             return;
         }
 
         if(!int.TryParse(info.GetArg(2), out credits)) {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error", "Invalid credits amount.");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "Invalid credits amount.");
             return;
         }
 
@@ -83,14 +83,14 @@ public class SetCreditsCmd(ICS2Gangs gangs) : Command(gangs)
 
             if (playerInfo == null)
             {
-                info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                     "Could not load information for player. Try again in a few seconds.");
                 return;
             }
 
             playerInfo.Credits = credits;
             gangs.GetGangsService().PushPlayerUpdate(playerInfo);
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_setcredits_success", player.PlayerName, playerInfo.Credits);
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_setcredits_success", player.PlayerName, playerInfo.Credits);
         }
     }
 }

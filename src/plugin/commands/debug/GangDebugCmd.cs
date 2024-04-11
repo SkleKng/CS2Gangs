@@ -24,13 +24,13 @@ public class GangDebugCmd(ICS2Gangs gangs) : Command(gangs)
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
         if (!AdminManager.PlayerHasPermissions(executor, gangs.Config.DebugPermission!))
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error", "You do not have permission to use this command.");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "You do not have permission to use this command.");
             return;
         }
 
@@ -39,7 +39,7 @@ public class GangDebugCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (playerInfo == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You were not found in the database. Try again in a few seconds.");
             return;
         }

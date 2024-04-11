@@ -22,7 +22,7 @@ public class GangsCmd(ICS2Gangs gangs) : Command(gangs)
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
@@ -32,7 +32,7 @@ public class GangsCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (playerInfo == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You were not found in the database. Try again in a few seconds.");
             return;
         }

@@ -1,4 +1,5 @@
 ﻿using api.plugin;
+using api.plugin.models;
 using api.plugin.services;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     public override string ModuleDescription => "Gangs for CS2 JB";
     
     private readonly Dictionary<string, Command> commands = new();
+    private readonly Dictionary<GangPlayer, GangPlayer> gangInvites = new();
 
     public IGangsService GetGangsService()
     {
@@ -26,6 +28,11 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     public BasePlugin GetBase()
     {
         return this;
+    }
+
+    public Dictionary<GangPlayer, GangPlayer> GetGangInvites()
+    {
+        return gangInvites;
     }
 
     public CS2GangsConfig? Config { get; set; }
@@ -74,3 +81,5 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
         }
     }
 }
+
+//TODO error handling for no arguments in commands, add invite menu, add handler for no argument command in css_ganginvite to open the invite menu, make invites expire

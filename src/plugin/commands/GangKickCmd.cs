@@ -26,7 +26,7 @@ public class GangKickCmd(ICS2Gangs gangs) : Command(gangs)
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
@@ -36,12 +36,12 @@ public class GangKickCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (senderPlayer == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You were not found in the database. Try again in a few seconds.");
             return;
         }
         if (senderPlayer.GangId == null) {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You are not in a gang.");
             return;
         }
@@ -50,14 +50,14 @@ public class GangKickCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (senderGang == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Your gang was not found in the database. Try again in a few seconds.");
             return;
         }
 
-        if(!ulong.TryParse(info.GetArg(0), out ulong targetSteamId))
+        if(!ulong.TryParse(info.GetArg(1), out ulong targetSteamId))
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Invalid SteamID.");
             return;
         }
@@ -66,14 +66,14 @@ public class GangKickCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (targetPlayer == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Player not found in the database.");
             return;
         }
 
         if (targetPlayer.GangId == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Player is not in a gang.");
             return;
         }
@@ -82,35 +82,35 @@ public class GangKickCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (targetGang == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Player's gang was not found in the database.");
             return;
         }
 
         if (senderPlayer.GangRank <= (int?)GangRank.Member)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You must at least be an officer to kick a player.");
             return;
         }
 
         if (senderPlayer.GangId != targetPlayer.GangId)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "Player is not in your gang.");
             return;
         }
 
         if (senderPlayer.SteamId == targetPlayer.SteamId)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You cannot transfer ownership to yourself!.");
             return;
         }
 
         if (targetPlayer.GangRank >= senderPlayer.GangRank)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You cannot kick a player with the same or higher rank than you.");
             return;
         }
@@ -121,6 +121,6 @@ public class GangKickCmd(ICS2Gangs gangs) : Command(gangs)
 
         gangs.GetGangsService().PushPlayerUpdate(targetPlayer);
 
-        info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangkick_success", targetPlayer.PlayerName ?? "Unknown");
+        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangkick_success", targetPlayer.PlayerName ?? "Unknown");
     }
 }

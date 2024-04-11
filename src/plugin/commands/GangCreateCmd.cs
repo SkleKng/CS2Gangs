@@ -31,14 +31,14 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (gangs.GetGangsService().GangNameExists(name).GetAwaiter().GetResult())
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangcreation_nameexists");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangcreation_nameexists");
             return;
         }
 
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
@@ -48,19 +48,19 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (gangPlayer == null)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You were not found in the database. Try again in a few seconds.");
             return;
         }
         if (gangPlayer.GangId != null) {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You are already in a gang. Leave your current gang to create a new one.");
             return;
         }
 
         if (gangPlayer.Credits < gangs.Config.GangCreationPrice)
         {
-            info.ReplyLocalized(gangs.GetBase().Localizer, "command_error",
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You do not have enough credits to create a gang.");
             return;
         }
@@ -70,8 +70,10 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
         gangPlayer.InvitedBy = gangPlayer.PlayerName;
         gangPlayer.GangRank = (int?)GangRank.Owner;
         gangPlayer.Credits -= gangs.Config.GangCreationPrice;
+
         gangs.GetGangsService().PushGangUpdate(newGang);
         gangs.GetGangsService().PushPlayerUpdate(gangPlayer);
-        info.ReplyLocalized(gangs.GetBase().Localizer, "command_gangcreation_success", name);
+        
+        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangcreation_success", name);
     }
 }
