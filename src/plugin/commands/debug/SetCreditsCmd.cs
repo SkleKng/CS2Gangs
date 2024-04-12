@@ -35,7 +35,7 @@ public class SetCreditsCmd(ICS2Gangs gangs) : Command(gangs)
         }
 
         if(info.ArgCount <= 1) {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "usage", "css_setcredits <player> (credits)");
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_usage", "css_setcredits <player> (credits)");
             return;
         }
 

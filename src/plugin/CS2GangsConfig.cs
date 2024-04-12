@@ -12,4 +12,6 @@ public class CS2GangsConfig : BasePluginConfig
 
     [JsonPropertyName("GangsCreationPrice")]
     public int GangCreationPrice { get; set; }
+    [JsonPropertyName("GangInviteExpireMinutes")]
+    public int GangInviteExpireMinutes { get; set; }
 }

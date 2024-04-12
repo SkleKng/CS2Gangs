@@ -55,6 +55,13 @@ public class GangPromoteCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
+        if (info.ArgCount <= 1)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_usage",
+                "css_gangpromote <SteamID>");
+            return;
+        }
+
         if(!ulong.TryParse(info.GetArg(1), out ulong targetSteamId))
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",

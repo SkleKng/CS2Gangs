@@ -15,7 +15,7 @@ public class GangMenuMembers(ICS2Gangs gangs, IGangsService gangService, Gang? g
         IMenu menu; 
         if(gang == null) {
             menu = new ChatMenu("This should not happen.");
-            menu.AddMenuOption($"Please let TechLE know if this shows up", (CCSPlayerController controller, ChatMenuOption option) => {}, true);
+            menu.AddMenuOption($"Please let TechLE know if this shows up", emptyAction(), true);
             return menu;
         }
 
@@ -27,6 +27,11 @@ public class GangMenuMembers(ICS2Gangs gangs, IGangsService gangService, Gang? g
         }
 
         return menu;
+    }
+
+    private Action<CCSPlayerController, ChatMenuOption> emptyAction()
+    {
+        return (player, _) => {};
     }
 
     private Action<CCSPlayerController, ChatMenuOption> generateCommandAction(string cmd)

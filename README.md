@@ -22,4 +22,6 @@
   - [ ] Rebel Tracking
 - **Credits**
   - [ ] RTD
-  - [ ] Credits for alive time
+  - [ ] Conflip
+  - [ ] Credits for alive time (increased with DS)
+  

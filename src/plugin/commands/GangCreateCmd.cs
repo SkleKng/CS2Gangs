@@ -23,7 +23,7 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
             return;
 
         if(info.ArgCount <= 1) {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangcreation_explain"); // printlocalizedchat for menu callback
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangcreation_explain");
             return;
         }
 

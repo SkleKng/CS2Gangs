@@ -18,7 +18,7 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     public override string ModuleDescription => "Gangs for CS2 JB";
     
     private readonly Dictionary<string, Command> commands = new();
-    private readonly Dictionary<GangPlayer, GangPlayer> gangInvites = new();
+    private readonly Dictionary<long, long> gangInvites = new();
 
     public IGangsService GetGangsService()
     {
@@ -30,7 +30,7 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
         return this;
     }
 
-    public Dictionary<GangPlayer, GangPlayer> GetGangInvites()
+    public Dictionary<long, long> GetGangInvites()
     {
         return gangInvites;
     }
@@ -69,6 +69,8 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
         commands.Add("css_gangdemote", new GangDemoteCmd(this));
         commands.Add("css_gangkick", new GangKickCmd(this));
         commands.Add("css_gangtransfer", new GangTransferCmd(this));
+        commands.Add("css_ganginvite", new GangInviteCommand(this));
+        commands.Add("css_gangjoin", new GangJoinCommand(this));
 
         // Debug commands
         commands.Add("css_gangdebug", new GangDebugCmd(this));
@@ -82,4 +84,4 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     }
 }
 
-//TODO error handling for no arguments in commands, add invite menu, add handler for no argument command in css_ganginvite to open the invite menu, make invites expire
+//TODO fix invites expiry, add gang chat which entails the following - { credit gain methods (DS MULTI), gang credits, gang perk system, gang chat , log for admins } add announcer service with methods to announce to gang (promote, demote, kick) and announce to server (create, disband)

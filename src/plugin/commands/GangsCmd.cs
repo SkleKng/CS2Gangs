@@ -44,6 +44,5 @@ public class GangsCmd(ICS2Gangs gangs) : Command(gangs)
             playerInfo);
 
         MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
-
     }
 }

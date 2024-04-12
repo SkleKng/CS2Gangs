@@ -1,5 +1,6 @@
 using api.plugin;
 using api.plugin.models;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Commands.Targeting;
@@ -56,6 +57,20 @@ public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
+        if (senderPlayer.GangRank == (int?)GangRank.Member)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "You must be at least an officer of the gang to invite a member.");
+            return;
+        }
+
+        if (info.ArgCount <= 1)
+        {
+            var menu = new GangMenuInvite(gangs, gangs.GetGangsService(), senderGang, senderPlayer);
+            MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+            return;
+        }
+
         TargetResult? targetResult = GetTarget(info);
         if(targetResult == null)
         {
@@ -94,13 +109,6 @@ public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        if (senderPlayer.GangRank == (int?)GangRank.Member)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You must be at least an officer of the gang to invite a member.");
-            return;
-        }
-
         if (senderPlayer.SteamId == targetPlayer.SteamId)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
@@ -108,11 +116,29 @@ public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        gangs.GetGangInvites().Add(senderPlayer, targetPlayer);
+        gangs.GetGangInvites()[senderPlayer.SteamId] = targetPlayer.SteamId;
+        AddExpireTimer(executor, target, senderPlayer, targetPlayer, senderGang);
 
         executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_success", targetPlayer.PlayerName ?? "Unknown");
         target.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_target", senderPlayer.PlayerName ?? "Unknown", senderGang.Name ?? "Unknown");
+    }
 
-        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangpromote_success", targetPlayer.PlayerName ?? "Unknown");
+    private void AddExpireTimer(CCSPlayerController sender, CCSPlayerController target, GangPlayer senderPlayer, GangPlayer targetPlayer, Gang gang)
+    {
+        int inviteTime = gangs.Config.GangInviteExpireMinutes;
+        Server.NextFrame(() =>
+        {
+            gangs.GetBase().AddTimer(inviteTime * 60, () =>
+            {
+                if (senderPlayer.GangId == null || targetPlayer.GangId == null)
+                    return;
+                if (senderPlayer.GangId != targetPlayer.GangId)
+                    return;
+                gangs.GetGangInvites().Remove(senderPlayer.SteamId);
+                sender.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_expire_sender", targetPlayer.PlayerName ?? "Unknown");
+                target.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_expire_receiver", gang.Name);
+            });
+        });
     }
 }
+

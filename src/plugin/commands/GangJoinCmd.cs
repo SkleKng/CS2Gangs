@@ -49,6 +49,13 @@ public class GangJoinCommand(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
+        if (info.ArgCount <= 1)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_usage",
+                "css_gangjoin <player>");
+            return;
+        }
+
         TargetResult? targetResult = GetTarget(info);
         if(targetResult == null)
         {
@@ -80,9 +87,22 @@ public class GangJoinCommand(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        if(gangs.GetGangInvites()[targetPlayer] != senderPlayer) {
+        if(gangs.GetGangInvites().ContainsKey(targetPlayer.SteamId) == false) {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "You have not been invited to a gang by this player!");
+            return;
+        }
+
+        if(gangs.GetGangInvites()[targetPlayer.SteamId] != senderPlayer.SteamId) {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "You have not been invited to a gang by this player!");
+            return;
+        }
+
+        if(targetPlayer.GangId == null)
+        {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "Player is not in a gang.");
             return;
         }
 
@@ -94,6 +114,7 @@ public class GangJoinCommand(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
+        gangs.GetGangInvites().Remove(targetPlayer.SteamId);
         senderPlayer.GangId = targetPlayer.GangId;
         senderPlayer.GangRank = (int?)GangRank.Member;
         senderPlayer.InvitedBy = targetPlayer.PlayerName;
