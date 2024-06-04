@@ -1,5 +1,6 @@
 using api.plugin;
 using api.plugin.models;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities;
@@ -31,43 +32,52 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        GangPlayer? gangPlayer = gangs.GetGangsService().GetGangPlayer(steam.SteamId64).GetAwaiter()
-            .GetResult();
+        Task.Run(async () => {
+            GangPlayer? gangPlayer = await gangs.GetGangsService().GetGangPlayer(steam.SteamId64);
+            if (gangPlayer == null)
+            {
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "You were not found in the database. Try again in a few seconds.");
+                });
+                return;
+            }
+            if (gangPlayer.GangId == null) {
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "You are not in a gang.");
+                });
+                return;
+            }
 
-        if (gangPlayer == null)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You were not found in the database. Try again in a few seconds.");
-            return;
-        }
-        if (gangPlayer.GangId == null) {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You are not in a gang.");
-            return;
-        }
+            Gang? gang = await gangs.GetGangsService().GetGang(gangPlayer.GangId.Value);
+            if (gang == null)
+            {
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "Your gang was not found in the database. Try again in a few seconds.");
+                });
+                return;
+            }
 
-        Gang? gang = gangs.GetGangsService().GetGang(gangPlayer.GangId.Value).GetAwaiter().GetResult();
+            if (gangPlayer.GangRank == (int?)GangRank.Owner)
+            {
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "You are the owner of the gang. You must transfer ownership before leaving.");
+                });
+                return;
+            }
 
-        if (gang == null)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "Your gang was not found in the database. Try again in a few seconds.");
-            return;
-        }
+            gangPlayer.GangId = null;
+            gangPlayer.GangRank = (int)GangRank.Member;
+            gangPlayer.InvitedBy = null;
 
-        if (gangPlayer.GangRank == (int?)GangRank.Owner)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You are the owner of the gang. You must transfer ownership before leaving.");
-            return;
-        }
+            gangs.GetGangsService().PushPlayerUpdate(gangPlayer);
 
-        gangPlayer.GangId = null;
-        gangPlayer.GangRank = (int)GangRank.Member;
-        gangPlayer.InvitedBy = null;
-
-        gangs.GetGangsService().PushPlayerUpdate(gangPlayer);
-
-        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangleave_success", gang.Name);
+            Server.NextFrame(() => {
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangleave_success", gang.Name);
+            });
+        });
     }
 }

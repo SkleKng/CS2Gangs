@@ -20,5 +20,5 @@
   "command_ganginvite_target": "%prefix% {green}{0} has invited you to join {1}! Type /gangjoin {0} to join!",
   "command_gangjoin_success": "%prefix% {green}You have successfully joined {0}!",
   "command_ganginvite_expire_sender": "%prefix% {red}Your invite to {0} has expired!",
-  "command_ganginvite_expire_receiver": "%prefix% {red}Your invite to join {0} has expired!",
+  "command_ganginvite_expire_receiver": "%prefix% {red}Your invite to join {0} has expired!"
 }

@@ -1,5 +1,6 @@
 using api.plugin;
 using api.plugin.models;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Menu;
@@ -27,22 +28,26 @@ public class GangsCmd(ICS2Gangs gangs) : Command(gangs)
             return;
         }
 
-        GangPlayer? playerInfo = gangs.GetGangsService().GetGangPlayer(steam.SteamId64).GetAwaiter()
-            .GetResult();
+        Task.Run(async () => {
+            GangPlayer? playerInfo = await gangs.GetGangsService().GetGangPlayer(steam.SteamId64);
+            if (playerInfo == null)
+            {
+                Server.NextFrame(() => { // Run this on the game thread
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "You were not found in the database. Try again in a few seconds.");
+                });
+                return;
+            }
 
-        if (playerInfo == null)
-        {
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                "You were not found in the database. Try again in a few seconds.");
-            return;
-        }
+            var menu = new GangMenuBase(
+                gangs,
+                gangs.GetGangsService(),
+                playerInfo.GangId == null ? null : gangs.GetGangsService().GetGang(playerInfo.GangId.Value).GetAwaiter().GetResult(),
+                playerInfo);
 
-        var menu = new GangMenuBase(
-            gangs,
-            gangs.GetGangsService(),
-            playerInfo.GangId == null ? null : gangs.GetGangsService().GetGang(playerInfo.GangId.Value).GetAwaiter().GetResult(),
-            playerInfo);
-
-        MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+            Server.NextFrame(() => {
+                MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+            });
+        });
     }
 }

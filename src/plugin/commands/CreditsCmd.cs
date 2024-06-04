@@ -1,5 +1,6 @@
 using api.plugin;
 using api.plugin.models;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Commands.Targeting;
@@ -30,17 +31,23 @@ public class CreditsCmd(ICS2Gangs gangs) : Command(gangs)
 
         if (info.ArgCount <= 1)
         {
-            GangPlayer? playerInfo = gangs.GetGangsService().GetGangPlayer(steam.SteamId64).GetAwaiter()
-                .GetResult();
+            Task.Run(async() => {
+                GangPlayer? playerInfo = await gangs.GetGangsService().GetGangPlayer(steam.SteamId64);
+                if (playerInfo == null)
+                {
+                    Server.NextFrame(() => {
+                        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                            "You were not found in the database. Try again in a few seconds.");
+                    });
+                    return;
+                }
 
-            if (playerInfo == null)
-            {
-                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                    "You were not found in the database. Try again in a few seconds.");
-                return;
-            }
-
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_credits", playerInfo.Credits);
+                Server.NextFrame(() => {
+                    if (!executor.IsReal())
+                        return;
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_credits", playerInfo.Credits);
+                });
+            });
             return;
         }
 
@@ -53,17 +60,25 @@ public class CreditsCmd(ICS2Gangs gangs) : Command(gangs)
 
         foreach (var player in target.Players)
         {
-            GangPlayer? playerInfo = gangs.GetGangsService().GetGangPlayer(player.SteamID).GetAwaiter()
-                .GetResult();
+            Task.Run(async() => {
+                GangPlayer? playerInfo = await gangs.GetGangsService().GetGangPlayer(player.SteamID);
+                if (playerInfo == null)
+                {
+                    Server.NextFrame(() => {
+                        if (!executor.IsReal())
+                            return;
+                        executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                            "Could not load information for player. Try again in a few seconds.");
+                    });
+                    return;
+                }
 
-            if (playerInfo == null)
-            {
-                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                    "Could not load information for player. Try again in a few seconds.");
-                return;
-            }
-
-            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_credits_other", player.PlayerName, playerInfo.Credits);
+                Server.NextFrame(() => {
+                    if (!executor.IsReal())
+                        return;
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_credits_other", player.PlayerName, playerInfo.Credits);
+                });
+            });
         }
     }
 }

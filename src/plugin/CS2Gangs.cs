@@ -84,4 +84,4 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     }
 }
 
-//TODO fix invites expiry, add gang chat which entails the following - { credit gain methods (DS MULTI), gang credits, gang perk system, gang chat , log for admins } add announcer service with methods to announce to gang (promote, demote, kick) and announce to server (create, disband)
+//TODO Fix invites expiry (on revisiting, just redo the invite system. Idk what I was thinking when I wrote it, was def on something. Move to it's own service), add gang chat which entails the following - { credit gain methods (DS MULTI), gang credits, gang perk system, gang chat , log for admins } add announcer service with methods to announce to gang (promote, demote, kick) and announce to server (create, disband)
