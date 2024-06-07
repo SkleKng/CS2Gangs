@@ -175,6 +175,7 @@ public class GangDemoteCmd(ICS2Gangs gangs) : Command(gangs)
                 if (!executor.IsReal())
                         return;
                 executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangdemote_success", targetPlayer.PlayerName ?? "Unknown");
+                gangs.GetAnnouncerService().AnnounceToGangLocalized(senderGang, gangs.GetBase().Localizer, "gang_announce_demote", targetPlayer.PlayerName ?? "Unknown", senderPlayer.PlayerName ?? "Unknown");
             });
         });
     }

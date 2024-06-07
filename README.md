@@ -14,8 +14,8 @@
   - [ ] Gang Leaderboards
   - [ ] Misc Gang Perks (bomb icon, knife, etc.)
   - [ ] Gang Credits
-  - [ ] Server Announcer System
-  - [ ] Gang Announcer System
+  - [X] Server Announcer System
+  - [X] Gang Announcer System
   - [ ] Gang Description
 - **Jailbreak**
   - [ ] Last Request Tracking

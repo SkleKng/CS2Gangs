@@ -46,8 +46,8 @@ public class GangInviteService : IGangInviteService
 
         Server.NextFrame(() => {
             sender.PrintLocalizedChat(CS2Gangs.GetBase().Localizer, "command_ganginvite_sent", inviteeName, gangName);
-
             receiver.PrintLocalizedChat(CS2Gangs.GetBase().Localizer, "command_ganginvite_receiver", inviterName, gangName);
+            CS2Gangs.GetAnnouncerService().AnnounceToGangLocalized(gang, CS2Gangs.GetBase().Localizer, "gang_announce_invite", inviterName, inviteeName);
 
             Server.RunOnTick(Server.TickCount + CS2Gangs.Config!.GangInviteExpireMinutes * 60 * 64, () =>
             {
@@ -109,6 +109,7 @@ public class GangInviteService : IGangInviteService
 
         Server.NextFrame(() => {
             invitee.PrintLocalizedChat(CS2Gangs.GetBase().Localizer, "command_gangjoin_success", gangName);
+            CS2Gangs.GetAnnouncerService().AnnounceToServerLocalized(CS2Gangs.GetBase().Localizer, "gang_announce_join", inviteeGangPlayer.PlayerName ?? "Unknown", gangName);
         });
 
         return;

@@ -76,6 +76,7 @@ public class GangDisbandCmd(ICS2Gangs gangs) : Command(gangs)
                 if (!executor.IsReal())
                         return;
                 executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangdisband_success", gang.Name);
+                gangs.GetAnnouncerService().AnnounceToServerLocalized(gangs.GetBase().Localizer, "gang_announce_disband", gangPlayer.PlayerName ?? "Unknown", gang.Name);
             });
         });
     }

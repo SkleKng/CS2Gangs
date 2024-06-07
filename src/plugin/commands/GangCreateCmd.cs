@@ -92,6 +92,7 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
                 if (!executor.IsReal())
                         return;
                 executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangcreation_success", gangName);
+                gangs.GetAnnouncerService().AnnounceToServerLocalized(gangs.GetBase().Localizer, "gang_announce_creation", gangPlayer.PlayerName ?? "Unknown", gangName);
             });
         });
     }

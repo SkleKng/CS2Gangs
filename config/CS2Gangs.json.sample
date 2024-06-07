@@ -2,5 +2,9 @@
   "DBConnectionString": "Server=server.com;Database=database;user=user;password=pass;port=3306",
   "DebugPermission": "@css/rcon",
   "GangsCreationPrice": 200,
-  "GangInviteExpireMinutes": 5
+  "GangInviteExpireMinutes": 5,
+  "VIPTier1Group": "#vip1",
+  "VIPTier2Group": "#vip2",
+  "VIPTier3Group": "#vip3",
+  "VIPTier4Group": "#vip4"
 }

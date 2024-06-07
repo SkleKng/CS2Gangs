@@ -77,6 +77,7 @@ public class GangLeaveCmd(ICS2Gangs gangs) : Command(gangs)
 
             Server.NextFrame(() => {
                 executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangleave_success", gang.Name);
+                gangs.GetAnnouncerService().AnnounceToGangLocalized(gang, gangs.GetBase().Localizer, "gang_announce_leave", gangPlayer.PlayerName ?? "Unknown");
             });
         });
     }

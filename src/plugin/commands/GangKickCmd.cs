@@ -149,6 +149,12 @@ public class GangKickCmd(ICS2Gangs gangs) : Command(gangs)
                 if (!executor.IsReal())
                     return;
                 executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangkick_success", targetPlayer.PlayerName ?? "Unknown");
+                CCSPlayerController target = Utilities.GetPlayerFromSteamId((ulong)targetPlayer.SteamId);
+                if (target != null)
+                {
+                    target.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangkick_kicked", targetGang.Name);
+                }
+                gangs.GetAnnouncerService().AnnounceToGangLocalized(senderGang, gangs.GetBase().Localizer, "gang_announce_kick", targetPlayer.PlayerName ?? "Unknown", senderPlayer.PlayerName ?? "Unknown");
             });
 
         });

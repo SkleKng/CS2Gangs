@@ -16,6 +16,7 @@
   "command_gangpromote_success": "%prefix% {green}Promoted {0} to Officer!",
   "command_gangtransfer_success": "%prefix% {green}Transferred gang ownership to {0}!",
   "command_gangkick_success": "%prefix% {green}Kicked {0} from the gang!",
+  "command_gangkick_kicked": "%prefix% {red}You have been kicked from {0}!",
   "command_ganginvite_sent": "%prefix% {green}Invited {0} to the gang!",
   "command_ganginvite_receiver": "%prefix% {green}{0} has invited you to join {1}! Type /gangjoin to join!",
   "command_ganginvite_expire_sender": "%prefix% {red}Your invite to {0} has expired!",
@@ -24,5 +25,14 @@
   "command_gangjoin_not_found": "%prefix% {red}You were not invited to join {0}!",
   "command_gangjoin_success": "%prefix% {green}You have successfully joined {0}!",
   "command_gangjoin_no_invites": "%prefix% {red}You have not been invited to join a gang!",
-  "command_gangjoin_multiple_invites": "%prefix% {red}You have multiple invites to join gangs! Type /gangjoin (gangname) to join one!"
+  "command_gangjoin_multiple_invites": "%prefix% {red}You have multiple invites to join gangs! Type /gangjoin (gangname) to join one!",
+  "gang_announce_creation": "%prefix% {green}{0} has created the gang {1}!",
+  "gang_announce_disband": "%prefix% {red}{0} has disbanded the gang {1}!",
+  "gang_announce_demote": "%prefix% {red}{0} has been demoted by {1}!",
+  "gang_announce_promote": "%prefix% {green}{0} has been promoted by {1}!",
+  "gang_announce_invite": "%prefix% {green}{0} has invited {1} to the gang!",
+  "gang_announce_join": "%prefix% {green}{0} has joined {1}!",
+  "gang_announce_kick": "%prefix% {red}{0} has been kicked from the gang by {1}!",
+  "gang_announce_leave": "%prefix% {red}{0} has left the gang!",
+  "gang_announce_transfer": "%prefix% {green}{0} has transferred ownership of {1} to {2}!"
 }

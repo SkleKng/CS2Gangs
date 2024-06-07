@@ -13,6 +13,7 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
 {
     private IGangsService? database;
     private IGangInviteService? inviteService;
+    private IAnnouncerService? announcerService;
     public override string ModuleName => "CS2Gangs";
     public override string ModuleVersion => "0.0.1";
     public override string ModuleAuthor => "EdgeGamers";
@@ -28,6 +29,11 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     public IGangInviteService GetGangInviteService()
     {
         return inviteService!;
+    }
+
+    public IAnnouncerService GetAnnouncerService()
+    {
+        return announcerService!;
     }
 
     public BasePlugin GetBase()
@@ -47,6 +53,7 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
         _ = new JoinListener(this);
         database = new GangsService(this);
         inviteService = new GangInviteService(this);
+        announcerService = new AnnouncerService(this);
         Logger.LogInformation("gangs Loaded!!!");
         
         loadCommands();
@@ -84,4 +91,4 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     }
 }
 
-//TODO Add gang chat which entails the following - { credit gain methods (DS MULTI), gang credits, gang perk system, gang chat, log for admins } add announcer service with methods to announce to gang (promote, demote, kick) and announce to server (create, disband)
+//TODO Add gang chat which entails the following - { credit gain methods (DS MULTI), gang credits, gang perk system, gang chat, log for admins }

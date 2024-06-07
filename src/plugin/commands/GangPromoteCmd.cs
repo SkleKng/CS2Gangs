@@ -145,6 +145,7 @@ public class GangPromoteCmd(ICS2Gangs gangs) : Command(gangs)
 
             Server.NextFrame(() => {
                 executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangpromote_success", targetPlayer.PlayerName ?? "Unknown");
+                gangs.GetAnnouncerService().AnnounceToServerLocalized(gangs.GetBase().Localizer, "gang_announce_promote", targetPlayer.PlayerName ?? "Unknown", senderPlayer.PlayerName ?? "Unknown");
             });
 
         });
