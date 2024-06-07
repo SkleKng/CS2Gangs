@@ -1,6 +1,7 @@
 ﻿using api.plugin;
 using api.plugin.models;
 using api.plugin.services;
+using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Menu;
 using plugin.services;
@@ -10,7 +11,7 @@ namespace plugin.menus;
 
 public class GangMenuBase(ICS2Gangs gangs, IGangsService gangService, Gang? gang, GangPlayer player) : GangMenu(gangs, gangService, gang, player)
 {
-    public override IMenu GetMenu()
+    public override async Task<IMenu> GetMenu()
     {
         IMenu menu; 
         if(gang == null) {
@@ -30,8 +31,11 @@ public class GangMenuBase(ICS2Gangs gangs, IGangsService gangService, Gang? gang
             menu.AddMenuOption("Disband Gang", generateCommandAction($"css_gangdisband"));
         }
 
-        var gangMembersCount = gangs.GetGangsService().GetGangMembers(gang.Id).GetAwaiter().GetResult().Count();
+        var gangMembers = await gangs.GetGangsService().GetGangMembers(gang.Id);
+        var gangMembersCount = gangMembers.Count();
+
         menu.AddMenuOption("Invite Players", generateCommandAction($"css_ganginvite"), player.GangRank == (int?)GangRank.Member || gangMembersCount >= gang.MaxSize);
+
         return menu;
     }
 

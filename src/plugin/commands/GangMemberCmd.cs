@@ -101,16 +101,16 @@ public class GangMemberCmd(ICS2Gangs gangs) : Command(gangs)
                 return;
             }
 
-            var menu = new GangMenuMember(
+            var menu = await new GangMenuMember(
                 gangs,
                 gangs.GetGangsService(),
                 gang,
                 gangPlayer,
                 menuGang,
-                menuPlayer);
+                menuPlayer).GetMenu();
 
             Server.NextFrame(() => {
-                MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+                MenuManager.OpenChatMenu(executor, (ChatMenu)menu);
             });
         });
     }

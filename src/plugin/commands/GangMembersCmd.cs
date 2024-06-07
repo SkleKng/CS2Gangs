@@ -60,14 +60,14 @@ public class GangMembersCmd(ICS2Gangs gangs) : Command(gangs)
                 return;
             }
 
-            var menu = new GangMenuMembers(
+            var menu = await new GangMenuMembers(
                 gangs,
                 gangs.GetGangsService(),
                 gang,
-                gangPlayer);
+                gangPlayer).GetMenu();
 
             Server.NextFrame(() => {
-                MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+                MenuManager.OpenChatMenu(executor, (ChatMenu)menu);
             });
         });
     }

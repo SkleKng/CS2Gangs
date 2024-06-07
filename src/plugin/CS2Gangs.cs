@@ -12,27 +12,27 @@ namespace plugin;
 public class CS2Gangs : BasePlugin, ICS2Gangs
 {
     private IGangsService? database;
+    private IGangInviteService? inviteService;
     public override string ModuleName => "CS2Gangs";
     public override string ModuleVersion => "0.0.1";
     public override string ModuleAuthor => "EdgeGamers";
     public override string ModuleDescription => "Gangs for CS2 JB";
     
     private readonly Dictionary<string, Command> commands = new();
-    private readonly Dictionary<long, long> gangInvites = new();
 
     public IGangsService GetGangsService()
     {
         return database!;
     }
 
+    public IGangInviteService GetGangInviteService()
+    {
+        return inviteService!;
+    }
+
     public BasePlugin GetBase()
     {
         return this;
-    }
-
-    public Dictionary<long, long> GetGangInvites()
-    {
-        return gangInvites;
     }
 
     public CS2GangsConfig? Config { get; set; }
@@ -45,8 +45,8 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     public override void Load(bool hotReload)
     {
         _ = new JoinListener(this);
-        // _ = new ChatListener(this);
         database = new GangsService(this);
+        inviteService = new GangInviteService(this);
         Logger.LogInformation("gangs Loaded!!!");
         
         loadCommands();
@@ -84,4 +84,4 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     }
 }
 
-//TODO Fix invites expiry (on revisiting, just redo the invite system. Idk what I was thinking when I wrote it, was def on something. Move to it's own service), add gang chat which entails the following - { credit gain methods (DS MULTI), gang credits, gang perk system, gang chat , log for admins } add announcer service with methods to announce to gang (promote, demote, kick) and announce to server (create, disband)
+//TODO Add gang chat which entails the following - { credit gain methods (DS MULTI), gang credits, gang perk system, gang chat, log for admins } add announcer service with methods to announce to gang (promote, demote, kick) and announce to server (create, disband)

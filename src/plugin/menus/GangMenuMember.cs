@@ -10,7 +10,7 @@ namespace plugin.menus;
 
 public class GangMenuMember(ICS2Gangs gangs, IGangsService gangService, Gang? senderGang, GangPlayer sender, Gang menuGang, GangPlayer menuPlayer) : GangMenu(gangs, gangService, senderGang, sender)
 {
-    public override IMenu GetMenu()
+    public override async Task<IMenu> GetMenu()
     {
         IMenu menu; 
 

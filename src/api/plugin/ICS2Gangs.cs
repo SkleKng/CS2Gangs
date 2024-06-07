@@ -8,6 +8,6 @@ namespace api.plugin;
 public interface ICS2Gangs : IPluginConfig<CS2GangsConfig>
 {
     public IGangsService GetGangsService();
-    public Dictionary<long, long> GetGangInvites();
+    public IGangInviteService GetGangInviteService();
     BasePlugin GetBase();
 }

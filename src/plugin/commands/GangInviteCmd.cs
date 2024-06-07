@@ -25,16 +25,39 @@ public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
         if (!executor.IsReal())
             return;
 
-        var steam = executor.AuthorizedSteamID;
-        if (steam == null)
+        var executorSteam = executor.AuthorizedSteamID;
+        if (executorSteam == null)
         {
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
                 "SteamID not authorized yet. Try again in a few seconds.");
             return;
         }
 
+        int argCount = info.ArgCount;
+        SteamID? targetSteam = null;
+        CCSPlayerController? player = null;
+
+        if(argCount > 1) {
+            TargetResult? target = GetSingleTarget(info);
+            if (target == null)
+            {
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "Player not found.");
+                return;
+            }
+
+            player = target.First();
+            targetSteam = player.AuthorizedSteamID;
+
+            if (targetSteam == null)
+            {
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                    "Player has no authorized SteamID.");
+                return;
+            }
+        }
+
         Task.Run(async () => {
-            GangPlayer? senderPlayer = await gangs.GetGangsService().GetGangPlayer(steam.SteamId64);
+            GangPlayer? senderPlayer = await gangs.GetGangsService().GetGangPlayer(executorSteam.SteamId64);
             if (senderPlayer == null)
             {
                 Server.NextFrame(() => {
@@ -70,77 +93,38 @@ public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
                 return;
             }
 
-            if (info.ArgCount <= 1)
+            if (argCount <= 1)
             {
-                var menu = new GangMenuInvite(gangs, gangs.GetGangsService(), senderGang, senderPlayer);
+                var menu = await new GangMenuInvite(gangs, gangs.GetGangsService(), senderGang, senderPlayer).GetMenu();
                 Server.NextFrame(() => {
-                    MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+                    MenuManager.OpenChatMenu(executor, (ChatMenu)menu);
                 });
                 return;
             }
 
-            TargetResult? target = GetTarget(info); // this should really be a single target
-            if (target == null)
+            GangPlayer? targetPlayer = await gangs.GetGangsService().GetGangPlayer(targetSteam.SteamId64);
+            if (targetPlayer == null)
             {
-                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error", "Player not found.");
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                    "Player not found in the database.");
                 return;
             }
 
-            foreach (var player in target.Players)
+            if (targetPlayer.GangId != null)
             {
-                if (player.AuthorizedSteamID == null)
-                {
-                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                        "Player has no authorized SteamID.");
-                    continue;
-                }
-
-                GangPlayer? targetPlayer = await gangs.GetGangsService().GetGangPlayer(player.AuthorizedSteamID.SteamId64);
-                if (targetPlayer == null)
-                {
-                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                        "Player not found in the database.");
-                    continue;
-                }
-
-                if (targetPlayer.GangId != null)
-                {
-                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                        "Player is already in a gang.");
-                    continue;
-                }
-
-                if (senderPlayer.SteamId == targetPlayer.SteamId)
-                {
-                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                        "You cannot invite yourself!.");
-                    continue;
-                }
-
-                gangs.GetGangInvites()[senderPlayer.SteamId] = targetPlayer.SteamId;
-                AddExpireTimer(executor, player, senderPlayer, targetPlayer, senderGang);
-
-                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_success", targetPlayer.PlayerName ?? "Unknown");
-                player.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_target", senderPlayer.PlayerName ?? "Unknown", senderGang.Name ?? "Unknown");
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                    "Player is already in a gang.");
+                return;
             }
-        });
-    }
 
-    private void AddExpireTimer(CCSPlayerController sender, CCSPlayerController target, GangPlayer senderPlayer, GangPlayer targetPlayer, Gang gang)
-    {
-        int inviteTime = gangs.Config.GangInviteExpireMinutes;
-        Server.NextFrame(() =>
-        {
-            gangs.GetBase().AddTimer(inviteTime * 60, () =>
+            if (senderPlayer.SteamId == targetPlayer.SteamId)
             {
-                if (senderPlayer.GangId == null || targetPlayer.GangId == null)
-                    return;
-                if (senderPlayer.GangId != targetPlayer.GangId)
-                    return;
-                gangs.GetGangInvites().Remove(senderPlayer.SteamId);
-                sender.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_expire_sender", targetPlayer.PlayerName ?? "Unknown");
-                target.PrintLocalizedChat(gangs.GetBase().Localizer, "command_ganginvite_expire_receiver", gang.Name);
-            });
+                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                    "You cannot invite yourself!.");
+                return;
+            }
+
+            gangs.GetGangInviteService().SendInvite(executor, player, senderPlayer, targetPlayer, senderGang);
         });
     }
 }

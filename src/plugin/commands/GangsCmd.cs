@@ -39,14 +39,14 @@ public class GangsCmd(ICS2Gangs gangs) : Command(gangs)
                 return;
             }
 
-            var menu = new GangMenuBase(
+            var menu = await new GangMenuBase(
                 gangs,
                 gangs.GetGangsService(),
                 playerInfo.GangId == null ? null : gangs.GetGangsService().GetGang(playerInfo.GangId.Value).GetAwaiter().GetResult(),
-                playerInfo);
+                playerInfo).GetMenu();
 
             Server.NextFrame(() => {
-                MenuManager.OpenChatMenu(executor, (ChatMenu)menu.GetMenu());
+                MenuManager.OpenChatMenu(executor, (ChatMenu)menu);
             });
         });
     }

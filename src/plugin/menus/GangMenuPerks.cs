@@ -14,7 +14,7 @@ namespace plugin.menus;
 /// <param name="player"></param>
 public class GangMenuPerks(ICS2Gangs gangs, IGangsService gangService, Gang gang, GangPlayer player) : GangMenu(gangs, gangService, gang, player)
 {
-    public override IMenu GetMenu()
+    public override async Task<IMenu> GetMenu()
     {
         var menu = new CenterHtmlMenu($"{gang?.Name ?? "Unassigned"} - Gang Perks");
         return menu;

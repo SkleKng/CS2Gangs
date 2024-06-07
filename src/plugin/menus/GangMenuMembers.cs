@@ -10,7 +10,7 @@ namespace plugin.menus;
 
 public class GangMenuMembers(ICS2Gangs gangs, IGangsService gangService, Gang? gang, GangPlayer player) : GangMenu(gangs, gangService, gang, player)
 {
-    public override IMenu GetMenu()
+    public override async Task<IMenu> GetMenu()
     {
         IMenu menu; 
         if(gang == null) {
@@ -20,8 +20,13 @@ public class GangMenuMembers(ICS2Gangs gangs, IGangsService gangService, Gang? g
         }
 
         menu = new ChatMenu($"{gang.Name} - Members");
+
+        IEnumerable<GangPlayer> members = await gangs.GetGangsService().GetGangMembers(gang.Id);
         
-        foreach (var member in gangs.GetGangsService().GetGangMembers(gang.Id).GetAwaiter().GetResult())
+        //sort members by rank
+        members = members.OrderByDescending(m => m.GangRank);
+
+        foreach (var member in members)
         {
             menu.AddMenuOption($"{member.PlayerName ?? "Unknown"} - {GangUtils.GetGangRankName(member.GangRank)}", generateCommandAction($"css_gangmember {member.SteamId}"));
         }

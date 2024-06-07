@@ -12,7 +12,7 @@ namespace plugin.menus;
 
 public class GangMenuInvite(ICS2Gangs gangs, IGangsService gangService, Gang? gang, GangPlayer gangPlayer) : GangMenu(gangs, gangService, gang, gangPlayer)
 {
-    public override IMenu GetMenu()
+    public override async Task<IMenu> GetMenu()
     {
         IMenu menu; 
         if(gang == null) {
@@ -22,21 +22,41 @@ public class GangMenuInvite(ICS2Gangs gangs, IGangsService gangService, Gang? ga
         }
 
         menu = new ChatMenu($"{gang.Name} - Invite a Player");
-        
-        foreach (var player in Utilities.GetPlayers())
+
+        List<Task<GangPlayer?>> tasks = new List<Task<GangPlayer?>>();
+
+        await Server.NextFrameAsync(() =>
         {
-            if(!player.IsReal())
-                continue;
-            if(player.AuthorizedSteamID == null)
-                continue;
-            if(player.AuthorizedSteamID.SteamId64 == (ulong)gangPlayer.SteamId)
-                continue;
-            GangPlayer? newPlayer = gangs.GetGangsService().GetGangPlayer(player.AuthorizedSteamID.SteamId64).GetAwaiter().GetResult();
+            foreach (var player in Utilities.GetPlayers())
+            {
+                if (!player.IsReal())
+                    continue;
+                if (player.AuthorizedSteamID == null)
+                    continue;
+                if (player.AuthorizedSteamID.SteamId64 == (ulong)gangPlayer.SteamId)
+                    continue;
+                tasks.Add(gangService.GetGangPlayer(player.AuthorizedSteamID.SteamId64));
+
+                // GangPlayer? newPlayer = await gangs.GetGangsService().GetGangPlayer(player.AuthorizedSteamID.SteamId64);
+                // if(newPlayer == null)
+                //     continue;
+                // if(newPlayer.GangId != null)
+                //     continue;
+
+            }
+        });
+
+        await Task.WhenAll(tasks);
+
+        foreach (var task in tasks)
+        {
+            GangPlayer? newPlayer = task.Result;
             if(newPlayer == null)
                 continue;
             if(newPlayer.GangId != null)
                 continue;
-            menu.AddMenuOption($"{newPlayer.PlayerName ?? "Unknown"}", generateCommandAction($"css_ganginvite {newPlayer.SteamId}"));
+
+            menu.AddMenuOption($"{newPlayer.PlayerName ?? "Unknown"}", generateCommandAction($"css_ganginvite {newPlayer.PlayerName}"));
         }
 
         return menu;

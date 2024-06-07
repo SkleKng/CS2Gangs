@@ -16,9 +16,13 @@
   "command_gangpromote_success": "%prefix% {green}Promoted {0} to Officer!",
   "command_gangtransfer_success": "%prefix% {green}Transferred gang ownership to {0}!",
   "command_gangkick_success": "%prefix% {green}Kicked {0} from the gang!",
-  "command_ganginvite_success": "%prefix% {green}Invited {0} to the gang!",
-  "command_ganginvite_target": "%prefix% {green}{0} has invited you to join {1}! Type /gangjoin {0} to join!",
-  "command_gangjoin_success": "%prefix% {green}You have successfully joined {0}!",
+  "command_ganginvite_sent": "%prefix% {green}Invited {0} to the gang!",
+  "command_ganginvite_receiver": "%prefix% {green}{0} has invited you to join {1}! Type /gangjoin to join!",
   "command_ganginvite_expire_sender": "%prefix% {red}Your invite to {0} has expired!",
-  "command_ganginvite_expire_receiver": "%prefix% {red}Your invite to join {0} has expired!"
+  "command_ganginvite_expire_receiver": "%prefix% {red}Your invite to join {0} has expired!",
+  "command_ganginvite_already_sent": "%prefix% {red}You have already sent an invite to {0}!",
+  "command_gangjoin_not_found": "%prefix% {red}You were not invited to join {0}!",
+  "command_gangjoin_success": "%prefix% {green}You have successfully joined {0}!",
+  "command_gangjoin_no_invites": "%prefix% {red}You have not been invited to join a gang!",
+  "command_gangjoin_multiple_invites": "%prefix% {red}You have multiple invites to join gangs! Type /gangjoin (gangname) to join one!"
 }

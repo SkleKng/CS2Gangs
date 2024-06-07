@@ -26,5 +26,5 @@ public abstract class GangMenu(ICS2Gangs gangs, IGangsService gangService, Gang?
     /// </summary>
     protected readonly GangPlayer player = player;
 
-    public abstract IMenu GetMenu();
+    public abstract Task<IMenu> GetMenu();
 }
