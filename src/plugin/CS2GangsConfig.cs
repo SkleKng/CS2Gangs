@@ -22,4 +22,6 @@ public class CS2GangsConfig : BasePluginConfig
     public string? VIPTier3Group { get; set; }
     [JsonPropertyName("VIPTier4Group")]
     public string? VIPTier4Group { get; set; }
+    [JsonPropertyName("CreditsDeliveryInterval")]
+    public int CreditsDeliveryInterval { get; set; }
 }

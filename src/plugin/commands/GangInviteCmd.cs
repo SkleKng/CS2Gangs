@@ -105,22 +105,28 @@ public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
             GangPlayer? targetPlayer = await gangs.GetGangsService().GetGangPlayer(targetSteam.SteamId64);
             if (targetPlayer == null)
             {
-                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                    "Player not found in the database.");
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "Player not found in the database.");
+                });
                 return;
             }
 
             if (targetPlayer.GangId != null)
             {
-                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                    "Player is already in a gang.");
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "Player is already in a gang.");
+                });
                 return;
             }
 
             if (senderPlayer.SteamId == targetPlayer.SteamId)
             {
-                executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                    "You cannot invite yourself!.");
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "You cannot invite yourself!.");
+                });
                 return;
             }
 

@@ -34,5 +34,6 @@
   "gang_announce_join": "%prefix% {green}{0} has joined {1}!",
   "gang_announce_kick": "%prefix% {red}{0} has been kicked from the gang by {1}!",
   "gang_announce_leave": "%prefix% {red}{0} has left the gang!",
-  "gang_announce_transfer": "%prefix% {green}{0} has transferred ownership of {1} to {2}!"
+  "gang_announce_transfer": "%prefix% {green}{0} has transferred ownership of {1} to {2}!",
+  "credits_earned": "%prefix% {green}You have earned {0} credits! You now have {1} credits!"
 }

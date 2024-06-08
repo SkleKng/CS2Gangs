@@ -155,29 +155,34 @@ public static class PlayerExtensions
         }
     }
 
-    public static bool IsDedicatedSupporter(this CCSPlayerController player)
+    public static bool IsVIP(this CCSPlayerController player, CS2GangsConfig config)
     {
         if (!player.IsReal())
             return false;
-        return AdminManager.PlayerHasPermissions(player, "@ego/ds");
+        return AdminManager.PlayerInGroup(player, config.VIPTier1Group!) ||
+               AdminManager.PlayerInGroup(player, config.VIPTier2Group!) ||
+               AdminManager.PlayerInGroup(player, config.VIPTier3Group!) ||
+               AdminManager.PlayerInGroup(player, config.VIPTier4Group!) ||
+               AdminManager.PlayerHasPermissions(player, config.DebugPermission!);
     }
 
-    public static int GetDSTier(this CCSPlayerController player)
+    public static int GetVIPTier(this CCSPlayerController player, CS2GangsConfig config)
     {
-        if (!player.IsReal() || !player.IsDedicatedSupporter())
+        if (!player.IsReal())
             return 0;
-        if (AdminManager.PlayerHasPermissions(player, "@ego/dsroyal"))
-            return 4;
-        if (AdminManager.PlayerHasPermissions(player, "@ego/dsplatinum"))
-            return 3;
-        if (AdminManager.PlayerHasPermissions(player, "@ego/dsgold"))
-            return 2;
-        if (AdminManager.PlayerHasPermissions(player, "@ego/dssilver"))
+        if (AdminManager.PlayerInGroup(player, config.VIPTier1Group!))
             return 1;
+        if (AdminManager.PlayerInGroup(player, config.VIPTier2Group!))
+            return 2;
+        if (AdminManager.PlayerInGroup(player, config.VIPTier3Group!))
+            return 3;
+        if (AdminManager.PlayerInGroup(player, config.VIPTier4Group!))
+            return 4;
+        if (AdminManager.PlayerHasPermissions(player, config.DebugPermission!))
+            return 4;
 
         return 0;
     }
-
     public static bool IsReal(this CCSPlayerController player)
     {
         //  Do nothing else before this:

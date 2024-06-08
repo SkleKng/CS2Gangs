@@ -23,5 +23,5 @@
 - **Credits**
   - [ ] RTD
   - [ ] Conflip
-  - [ ] Credits for alive time (increased with DS)
+  - [X] Credits for alive time (increased with DS)
   

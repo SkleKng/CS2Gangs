@@ -6,5 +6,6 @@
   "VIPTier1Group": "#vip1",
   "VIPTier2Group": "#vip2",
   "VIPTier3Group": "#vip3",
-  "VIPTier4Group": "#vip4"
+  "VIPTier4Group": "#vip4",
+  "CreditsDeliveryInterval": 120
 }

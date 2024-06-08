@@ -10,5 +10,6 @@ public interface ICS2Gangs : IPluginConfig<CS2GangsConfig>
     public IGangsService GetGangsService();
     public IGangInviteService GetGangInviteService();
     public IAnnouncerService GetAnnouncerService();
+    public ICreditService GetCreditService();
     BasePlugin GetBase();
 }
