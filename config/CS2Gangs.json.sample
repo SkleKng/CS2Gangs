@@ -3,9 +3,19 @@
   "DebugPermission": "@css/rcon",
   "GangsCreationPrice": 200,
   "GangInviteExpireMinutes": 5,
+  "DefaultPassiveCreditAmount": 1,
   "VIPTier1Group": "#vip1",
+  "VIPTier1PassiveCreditAmount": 2,
   "VIPTier2Group": "#vip2",
+  "VIPTier2PassiveCreditAmount": 4,
   "VIPTier3Group": "#vip3",
+  "VIPTier3PassiveCreditAmount": 6,
   "VIPTier4Group": "#vip4",
-  "CreditsDeliveryInterval": 120
+  "VIPTier4PassiveCreditAmount": 8,
+  "CreditsDeliveryInterval": 120,
+  "GangChatCost": 2000,
+  "GangExpandInitialCost": 1000,
+  "GangExpandCostPerLevel": 250,
+  "MaxGangSize": 25,
+  "InitialGangSize": 10
 }
