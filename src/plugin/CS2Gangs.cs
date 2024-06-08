@@ -90,6 +90,15 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
         commands.Add("css_gangdebug", new GangDebugCmd(this));
         commands.Add("css_setcredits", new SetCreditsCmd(this));
 
+        // Bank commands
+        commands.Add("css_gangbank", new GangBankCmd(this));
+        commands.Add("css_gangdeposit", new GangDepositCmd(this));
+        commands.Add("css_gangperks", new GangPerksCmd(this));
+        commands.Add("css_gangpurchase", new GangPurchaseCmd(this));
+
+        commands.Add("css_gc", new GangChatCmd(this));
+        commands.Add("css_gangchat", new GangChatCmd(this));
+
         
         foreach (var command in commands)
         {
@@ -98,4 +107,4 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     }
 }
 
-// TODO: Add gang chat which entails the following - { gang credits, gang perk system, gang chat, log for admins }, add cache for GangPlayer, allow players to be targetted in member commands instead of just steamids
+// TODO: Add gang chat log for admins, add cache for GangPlayer, allow players to be targetted in member commands instead of just steamids, add chat listeners for create/gang chat

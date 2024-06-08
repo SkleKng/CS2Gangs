@@ -35,6 +35,8 @@ public class GangMenuBase(ICS2Gangs gangs, IGangsService gangService, Gang? gang
         var gangMembersCount = gangMembers.Count();
 
         menu.AddMenuOption("Invite Players", generateCommandAction($"css_ganginvite"), player.GangRank == (int?)GangRank.Member || gangMembersCount >= gang.MaxSize);
+        menu.AddMenuOption("Gang Bank", generateCommandAction($"css_gangbank"));
+        menu.AddMenuOption("Gang Perks", generateCommandAction($"css_gangperks"));
 
         return menu;
     }

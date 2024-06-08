@@ -5,6 +5,7 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using Microsoft.Extensions.Logging;
 using plugin.extensions;
+using plugin.utils;
 
 namespace plugin.services;
 
@@ -100,7 +101,7 @@ public class GangInviteService : IGangInviteService
         GangInvites.Remove(invite);
 
         inviteeGangPlayer.GangId = invite.gangId;
-        inviteeGangPlayer.GangRank = 0;
+        inviteeGangPlayer.GangRank = (int?)GangRank.Member;
         inviteeGangPlayer.InvitedBy = invite.inviterName;
 
         CS2Gangs.GetGangsService().PushPlayerUpdate(inviteeGangPlayer);

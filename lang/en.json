@@ -35,5 +35,10 @@
   "gang_announce_kick": "%prefix% {red}{0} has been kicked from the gang by {1}!",
   "gang_announce_leave": "%prefix% {red}{0} has left the gang!",
   "gang_announce_transfer": "%prefix% {green}{0} has transferred ownership of {1} to {2}!",
-  "credits_earned": "%prefix% {green}You have earned {0} credits! You now have {1} credits!"
+  "credits_earned": "%prefix% {green}You have earned {0} credits! You now have {1} credits!",
+  "credits_deposited": "%prefix% {green}You have deposited {0} credits! You now have {1} credits!",
+  "gang_announce_deposit": "%prefix% {green}{0} has deposited {1} credits into the gang bank!",
+  "command_gangpurchase_success": "%prefix% {green}You have purchased {0} for {1} credits!",
+  "gang_announce_purchase": "%prefix% {green}{0} has purchased {1} for {2} credits!",
+  "gang_chat_format": "{lightpurple}[{purple}{0}{lightpurple}] {1}: {2}"
 }

@@ -5,18 +5,19 @@
 ## Status
 
 - **Server**
-  - [ ] Config
+  - [X] Config
   - [ ] Logging
 - **Gangs**
   - [x] Gang Creation
   - [x] Gang Member Management
-  - [ ] Gang Chat
+  - [X] Gang Chat
   - [ ] Gang Leaderboards
   - [ ] Misc Gang Perks (bomb icon, knife, etc.)
-  - [ ] Gang Credits
+  - [X] Gang Credits
   - [X] Server Announcer System
   - [X] Gang Announcer System
   - [ ] Gang Description
+  - [ ] Chat Listeners
 - **Jailbreak**
   - [ ] Last Request Tracking
   - [ ] Rebel Tracking

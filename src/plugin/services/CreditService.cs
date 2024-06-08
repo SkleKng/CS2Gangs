@@ -37,19 +37,19 @@ public class CreditService : ICreditService
             switch (player.GetVIPTier(CS2Gangs.Config!))
             {
                 case 1:
-                    creditsToGive.Add(2);
+                    creditsToGive.Add(CS2Gangs.Config!.VIPTier1PassiveCreditAmount);
                     break;
                 case 2:
-                    creditsToGive.Add(4);
+                    creditsToGive.Add(CS2Gangs.Config!.VIPTier2PassiveCreditAmount);
                     break;
                 case 3:
-                    creditsToGive.Add(7);
+                    creditsToGive.Add(CS2Gangs.Config!.VIPTier3PassiveCreditAmount);
                     break;
                 case 4:
-                    creditsToGive.Add(11);
+                    creditsToGive.Add(CS2Gangs.Config!.VIPTier4PassiveCreditAmount);
                     break;
                 default:
-                    creditsToGive.Add(1);
+                    creditsToGive.Add(CS2Gangs.Config!.DefaultPassiveCreditAmount);
                     break;
             }
         }
@@ -73,6 +73,19 @@ public class CreditService : ICreditService
                     }
                 });
             }
+        });
+    }
+
+    public void DepositInBank(CCSPlayerController player, GangPlayer gangPlayer, Gang gang, int amount)
+    {
+        gangPlayer.Credits -= amount;
+        gang.Credits += amount;
+        CS2Gangs.GetGangsService().PushPlayerUpdate(gangPlayer);
+        CS2Gangs.GetGangsService().PushGangUpdate(gang);
+
+        Server.NextFrame(() => {
+            player.PrintLocalizedChat(CS2Gangs.GetBase().Localizer, "credits_deposited", amount, gangPlayer.Credits);
+            CS2Gangs.GetAnnouncerService().AnnounceToGangLocalized(gang, CS2Gangs.GetBase().Localizer, "gang_announce_deposit", gangPlayer.PlayerName ?? "Unknown", amount);
         });
     }
 }
