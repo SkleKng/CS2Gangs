@@ -12,6 +12,7 @@ obj/
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore
 
+skle-sucks.json
 cs2-gangs.sln
 config/CS2Gangs.json
 .gitlab-ci.yml
