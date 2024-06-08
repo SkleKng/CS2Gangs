@@ -170,17 +170,16 @@ public static class PlayerExtensions
     {
         if (!player.IsReal())
             return 0;
-        if (AdminManager.PlayerInGroup(player, config.VIPTier1Group!))
-            return 1;
-        if (AdminManager.PlayerInGroup(player, config.VIPTier2Group!))
-            return 2;
-        if (AdminManager.PlayerInGroup(player, config.VIPTier3Group!))
-            return 3;
-        if (AdminManager.PlayerInGroup(player, config.VIPTier4Group!))
-            return 4;
         if (AdminManager.PlayerHasPermissions(player, config.DebugPermission!))
             return 4;
-
+        if (AdminManager.PlayerInGroup(player, config.VIPTier4Group!))
+            return 4;
+        if (AdminManager.PlayerInGroup(player, config.VIPTier3Group!))
+            return 3;
+        if (AdminManager.PlayerInGroup(player, config.VIPTier2Group!))
+            return 2;
+        if (AdminManager.PlayerInGroup(player, config.VIPTier1Group!))
+            return 1;
         return 0;
     }
     public static bool IsReal(this CCSPlayerController player)

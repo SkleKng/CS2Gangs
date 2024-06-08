@@ -22,6 +22,8 @@ public class GangMenuMembers(ICS2Gangs gangs, IGangsService gangService, Gang? g
         menu = new ChatMenu($"{gang.Name} - Members");
 
         IEnumerable<GangPlayer> members = await gangs.GetGangsService().GetGangMembers(gang.Id);
+        var gangMembersCount = members.Count();
+        menu.AddMenuOption($"Members: {gangMembersCount}/{gang.MaxSize}", emptyAction(), true);
         
         //sort members by rank
         members = members.OrderByDescending(m => m.GangRank);

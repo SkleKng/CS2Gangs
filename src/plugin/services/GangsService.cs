@@ -10,6 +10,9 @@ public class GangsService : IGangsService
 {
     private readonly CS2Gangs CS2Gangs;
 
+    private Dictionary<int, Gang> gangCache = new();
+    private Dictionary<ulong, GangPlayer> playerCache = new();
+
     public GangsService(CS2Gangs CS2Gangs)
     {
         this.CS2Gangs = CS2Gangs;
@@ -18,23 +21,47 @@ public class GangsService : IGangsService
 
     public async Task<Gang?> GetGang(int gangid)
     {
+        if (gangCache.ContainsKey(gangid))
+            return gangCache[gangid];
+
         using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 
-            return await conn.QueryFirstOrDefaultAsync<Gang>("SELECT * FROM cs2_gangs_gangs WHERE id = @gangid",
+            // return await conn.QueryFirstOrDefaultAsync<Gang>("SELECT * FROM cs2_gangs_gangs WHERE id = @gangid",
+            //     new { gangid });
+
+            var gang = await conn.QueryFirstOrDefaultAsync<Gang>("SELECT * FROM cs2_gangs_gangs WHERE id = @gangid",
                 new { gangid });
+            
+            if (gang == null)
+                return null;
+
+            gangCache.Add(gangid, gang);
+            return gang;
         }
     }
 
     public async Task<GangPlayer?> GetGangPlayer(ulong steamid)
     {
+        if (playerCache.ContainsKey(steamid))
+            return playerCache[steamid];
+
         using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
 
-            return await conn.QueryFirstOrDefaultAsync<GangPlayer>(
+            // return await conn.QueryFirstOrDefaultAsync<GangPlayer>(
+            //     "SELECT * FROM cs2_gangs_players WHERE steamid = @steamid", new { steamid });
+
+            var player = await conn.QueryFirstOrDefaultAsync<GangPlayer>(
                 "SELECT * FROM cs2_gangs_players WHERE steamid = @steamid", new { steamid });
+
+            if (player == null)
+                return null;
+
+            playerCache.Add(steamid, player);
+            return player;
         }
     }
 
@@ -56,6 +83,8 @@ public class GangsService : IGangsService
 
     public async Task<bool> GangNameExists(string name)
     {
+        name = name.ToLower();
+
         using var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString);
         conn.Open();
 
@@ -79,6 +108,18 @@ public class GangsService : IGangsService
 
         await conn.ExecuteAsync("DELETE FROM cs2_gangs_gangs WHERE id = @Id", gang);
         await conn.ExecuteAsync("UPDATE cs2_gangs_players SET gangid = NULL, invitedby = NULL, gangrank = NULL WHERE gangid = @Id", gang);
+
+        gangCache.Remove(gang.Id);
+
+        foreach (var player in playerCache.Values)
+        {
+            if (player.GangId == gang.Id)
+            {
+                player.GangId = null;
+                player.InvitedBy = null;
+                player.GangRank = null;
+            }
+        }
     }
 
     public async void PushGangUpdate(Gang gang)
@@ -87,8 +128,10 @@ public class GangsService : IGangsService
         conn.Open();
 
         await conn.ExecuteAsync(
-            "INSERT INTO cs2_gangs_gangs (id, name, description, maxsize, credits, colors, colorpreference, chat, chatcolor, bombicons, emotes) VALUES (@Id, @Name, @description, @MaxSize, @Credits, @Colors, @ColorPreference, @Chat, @ChatColor, @BombIcons, @Emotes) ON DUPLICATE KEY UPDATE name = @Name, description = @description, maxsize = @MaxSize, credits = @Credits, colors = @Colors, colorpreference = @ColorPreference, chat = @Chat, chatcolor = @ChatColor, bombicons = @BombIcons, emotes = @Emotes",
+            "INSERT INTO cs2_gangs_gangs (id, name, maxsize, description, credits, colors, colorpreference, chat, chatcolor, bombicons, emotes) VALUES (@Id, @Name, @MaxSize, @description, @Credits, @Colors, @ColorPreference, @Chat, @ChatColor, @BombIcons, @Emotes) ON DUPLICATE KEY UPDATE name = @Name, description = @description, maxsize = @MaxSize, credits = @Credits, colors = @Colors, colorpreference = @ColorPreference, chat = @Chat, chatcolor = @ChatColor, bombicons = @BombIcons, emotes = @Emotes",
             gang);
+
+        gangCache[gang.Id] = gang;
     }
 
     public async void PushPlayerUpdate(GangPlayer player)
@@ -99,6 +142,14 @@ public class GangsService : IGangsService
         await conn.ExecuteAsync(
             "UPDATE cs2_gangs_players SET playername = @PlayerName, gangid = @GangId, gangrank = @GangRank, invitedby = @InvitedBy, credits = @Credits, monthlylr = @MonthlyLR, lifetimelr = @LifetimeLR, monthlyctkills = @MonthlyCTKills, lifetimectkills = @LifetimeCTKills, monthlytkills = @MonthlyTKills, lifetimetkills = @LifetimeTKills, monthlyrebelkills = @MonthlyRebelKills, lifetimerebelkills = @LifetimeRebelKills, lastjoin = CURRENT_TIMESTAMP WHERE steamid = @SteamId",
             player);
+
+        playerCache[(ulong)player.SteamId] = player;
+    }
+
+    public void ClearCache()
+    {
+        gangCache.Clear();
+        playerCache.Clear();
     }
 
     private async Task<bool> playerExists(ulong steamid)
@@ -145,8 +196,6 @@ public class GangsService : IGangsService
 
     private async void createTables()
     {
-        CS2Gangs.GetBase().Logger.LogInformation($"Attempting to establish connection using the following connection string: {CS2Gangs.Config!.DBConnectionString}");
-
         using (var conn = new MySqlConnection(CS2Gangs.Config!.DBConnectionString))
         {
             await conn.OpenAsync();
@@ -156,8 +205,8 @@ public class GangsService : IGangsService
                               CREATE TABLE IF NOT EXISTS cs2_gangs_gangs (
                                   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                                   name VARCHAR(255) NOT NULL UNIQUE,
-                                  description VARCHAR(255) DEFAULT NULL,
                                   maxsize INT NOT NULL DEFAULT 10,
+                                  description VARCHAR(255) DEFAULT NULL,
                                   credits INT NOT NULL DEFAULT 0,
                                   colors INT NOT NULL DEFAULT 0,
                                   colorpreference INT NOT NULL DEFAULT 0,

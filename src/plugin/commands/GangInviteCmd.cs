@@ -130,6 +130,18 @@ public class GangInviteCommand(ICS2Gangs gangs) : Command(gangs)
                 return;
             }
 
+            var gangMembers = await gangs.GetGangsService().GetGangMembers(senderGang.Id);
+            var gangMembersCount = gangMembers.Count();
+
+            if (gangMembersCount >= senderGang.MaxSize)
+            {
+                Server.NextFrame(() => {
+                    executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                        "Your gang is full.");
+                });
+                return;
+            }
+
             gangs.GetGangInviteService().SendInvite(executor, player, senderPlayer, targetPlayer, senderGang);
         });
     }

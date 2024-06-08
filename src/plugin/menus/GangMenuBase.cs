@@ -20,21 +20,19 @@ public class GangMenuBase(ICS2Gangs gangs, IGangsService gangService, Gang? gang
             return menu;
         }
 
-        menu = new ChatMenu($"{gang.Name} - Gang Menu");
-        // menu.AddMenuOption("View Gang Perks", generateCommandAction($"css_gangperks"));
-        menu.AddMenuOption("View Gang Members", generateCommandAction($"css_gangmembers"));
-
-        if(player.GangRank < (int?)GangRank.Owner) { 
-            menu.AddMenuOption("Leave Gang", generateCommandAction($"css_gangleave"));
-        }
-        else {
-            menu.AddMenuOption("Disband Gang", generateCommandAction($"css_gangdisband"));
-        }
-
         var gangMembers = await gangs.GetGangsService().GetGangMembers(gang.Id);
         var gangMembersCount = gangMembers.Count();
 
+        menu = new ChatMenu($"{gang.Name} - Gang Menu");
+
         menu.AddMenuOption("Invite Players", generateCommandAction($"css_ganginvite"), player.GangRank == (int?)GangRank.Member || gangMembersCount >= gang.MaxSize);
+
+        if(player.GangRank < (int?)GangRank.Owner)
+            menu.AddMenuOption("Leave Gang", generateCommandAction($"css_gangleave"));
+        else
+            menu.AddMenuOption("Disband Gang", generateCommandAction($"css_gangdisband"));
+
+        menu.AddMenuOption("View Gang Members", generateCommandAction($"css_gangmembers"));
         menu.AddMenuOption("Gang Bank", generateCommandAction($"css_gangbank"));
         menu.AddMenuOption("Gang Perks", generateCommandAction($"css_gangperks"));
 

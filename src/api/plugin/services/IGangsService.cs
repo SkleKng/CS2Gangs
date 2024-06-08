@@ -13,4 +13,5 @@ public interface IGangsService
     void DisbandGang(Gang gang);
     void PushGangUpdate(Gang gang);
     void PushPlayerUpdate(GangPlayer player);
+    void ClearCache();
 }

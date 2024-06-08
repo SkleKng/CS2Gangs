@@ -1,6 +1,6 @@
 # CS2Gangs
 
-(VERY) WIP Rewrite of the CS:GO plugin <https://github.com/Headline/Gangs>
+Rewrite of the CS:GO plugin <https://github.com/Headline/Gangs> for CS2 utilizing CounterStrikeSharp
 
 ## Status
 
@@ -17,12 +17,11 @@
   - [X] Server Announcer System
   - [X] Gang Announcer System
   - [ ] Gang Description
-  - [ ] Chat Listeners
 - **Jailbreak**
   - [ ] Last Request Tracking
   - [ ] Rebel Tracking
 - **Credits**
   - [ ] RTD
-  - [ ] Conflip
+  - [ ] Coinflip
   - [X] Credits for alive time (increased with DS)
   

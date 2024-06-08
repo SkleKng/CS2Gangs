@@ -54,6 +54,7 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
         Config = config;
     }
 
+
     public override void Load(bool hotReload)
     {
         _ = new JoinListener(this);
@@ -89,6 +90,7 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
         // Debug commands
         commands.Add("css_gangdebug", new GangDebugCmd(this));
         commands.Add("css_setcredits", new SetCreditsCmd(this));
+        commands.Add("css_cleargangcache", new ClearGangCacheCmd(this));
 
         // Bank commands
         commands.Add("css_gangbank", new GangBankCmd(this));
@@ -107,4 +109,4 @@ public class CS2Gangs : BasePlugin, ICS2Gangs
     }
 }
 
-// TODO: Add gang chat log for admins, add cache for GangPlayer, allow players to be targetted in member commands instead of just steamids, add chat listeners for create/gang chat
+// TODO: Add gang chat log for admins, allow players to be targetted in member commands instead of just steamids

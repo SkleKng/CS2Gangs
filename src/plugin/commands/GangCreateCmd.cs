@@ -27,6 +27,11 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangcreation_explain");
             return;
         }
+        if(info.ArgCount > 2) {
+            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                "Invalid number of arguments. Please provide a gang name with no spaces.");
+            return;
+        }
 
         var steam = executor.AuthorizedSteamID;
         if (steam == null)
@@ -79,7 +84,7 @@ public class GangCreateCmd(ICS2Gangs gangs) : Command(gangs)
                 return;
             }
 
-            Gang newGang = new Gang(gangs.GetGangsService().GetNextGangId().GetAwaiter().GetResult(), gangName);
+            Gang newGang = new Gang(gangs.GetGangsService().GetNextGangId().GetAwaiter().GetResult(), gangName, gangs.Config.InitialGangSize);
             gangPlayer.GangId = newGang.Id;
             gangPlayer.InvitedBy = gangPlayer.PlayerName;
             gangPlayer.GangRank = (int?)GangRank.Owner;

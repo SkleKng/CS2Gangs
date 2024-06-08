@@ -3,8 +3,8 @@ namespace api.plugin.models;
 public class Gang(
     int id,
     string name,
+    int maxSize,
     string description = "",
-    int maxSize = 10,
     int credits = 0,
     int colors = 0,
     int colorPreference = 0,
@@ -15,8 +15,8 @@ public class Gang(
 {
     public int Id { get; set; } = id;
     public string Name { get; set; } = name;
-    public string Description { get; set; } = description;
     public int MaxSize { get; set; } = maxSize;
+    public string Description { get; set; } = description;
     public int Credits { get; set; } = credits;
     public int Colors { get; set; } = colors;
     public int ColorPreference { get; set; } = colorPreference;
@@ -27,6 +27,6 @@ public class Gang(
 
     public override string ToString()
     {
-        return $"Id: {Id}, Name: {Name}, Description: {Description}, MaxSize: {MaxSize}, Credits: {Credits}, Colors: {Colors}, ColorPreference: {ColorPreference}, Chat: {Chat}, ChatColor: {ChatColor}, BombIcons: {BombIcons}, Emotes: {Emotes}";
+        return $"Id: {Id}, Name: {Name}, MaxSize: {MaxSize}, Description: {Description}, Credits: {Credits}, Colors: {Colors}, ColorPreference: {ColorPreference}, Chat: {Chat}, ChatColor: {ChatColor}, BombIcons: {BombIcons}, Emotes: {Emotes}";
     }
 }

@@ -111,7 +111,7 @@ public class GangPurchaseCmd(ICS2Gangs gangs) : Command(gangs)
                             if (!executor.IsReal())
                                 return;
                             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
-                                "Not enough credits.");
+                                "Your gang does not have enough credits to purchase this..");
                         });
                     }
                     else if (gang.Chat)
@@ -136,11 +136,48 @@ public class GangPurchaseCmd(ICS2Gangs gangs) : Command(gangs)
                             executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangpurchase_success",
                                 "Gang Chat", gangs.Config.GangChatCost.ToString());
                             gangs.GetAnnouncerService().AnnounceToGangLocalized(gang, gangs.GetBase().Localizer,
-                                "gang_announce_purchase", gangPlayer.PlayerName ?? "Unknown", "Gang Chat", gangs.Config.GangChatCost.ToString());
+                                "gang_announce_purchase", gangPlayer.PlayerName ?? "Unknown", "Gang Chat (!gc)", gangs.Config.GangChatCost.ToString());
                         });
                     }
                     break;
-
+                case GangPurchaseType.GangExpand:
+                    int cost = gangs.Config.GangExpandInitialCost + gangs.Config.GangExpandCostPerLevel * (gang.MaxSize - gangs.Config.InitialGangSize);
+                    if (gang.Credits < cost)
+                    {
+                        Server.NextFrame(() =>
+                        {
+                            if (!executor.IsReal())
+                                return;
+                            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                                "Your gang does not have enough credits to purchase this..");
+                        });
+                    }
+                    else if (gang.MaxSize >= gangs.Config.MaxGangSize)
+                    {
+                        Server.NextFrame(() =>
+                        {
+                            if (!executor.IsReal())
+                                return;
+                            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_error",
+                                "Your gang has already reached the max gang size.");
+                        });
+                    }
+                    else
+                    {
+                        gang.Credits -= cost;
+                        gang.MaxSize++;
+                        gangs.GetGangsService().PushGangUpdate(gang);
+                        Server.NextFrame(() =>
+                        {
+                            if (!executor.IsReal())
+                                return;
+                            executor.PrintLocalizedChat(gangs.GetBase().Localizer, "command_gangpurchase_success",
+                                "Gang Expansion", cost.ToString());
+                            gangs.GetAnnouncerService().AnnounceToGangLocalized(gang, gangs.GetBase().Localizer,
+                                "gang_announce_purchase", gangPlayer.PlayerName ?? "Unknown", "Gang Expansion", cost.ToString());
+                        });
+                    }
+                    break;
                 default:
                     Server.NextFrame(() =>
                     {
@@ -157,5 +194,6 @@ public class GangPurchaseCmd(ICS2Gangs gangs) : Command(gangs)
 
 public enum GangPurchaseType
 {
-    GangChat = 1
+    GangChat = 1,
+    GangExpand = 2
 }

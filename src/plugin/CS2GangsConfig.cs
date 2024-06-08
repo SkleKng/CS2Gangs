@@ -49,4 +49,16 @@ public class CS2GangsConfig : BasePluginConfig
     public int CreditsDeliveryInterval { get; set; }
     [JsonPropertyName("GangChatCost")]
     public int GangChatCost { get; set; }
+
+    [JsonPropertyName("GangExpandInitialCost")]
+    public int GangExpandInitialCost { get; set; }
+
+    [JsonPropertyName("GangExpandCostPerLevel")]
+    public int GangExpandCostPerLevel { get; set; }
+
+    [JsonPropertyName("MaxGangSize")]
+    public int MaxGangSize { get; set; }
+
+    [JsonPropertyName("InitialGangSize")]
+    public int InitialGangSize { get; set; }
 }

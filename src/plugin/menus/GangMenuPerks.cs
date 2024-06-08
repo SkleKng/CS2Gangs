@@ -29,7 +29,10 @@ public class GangMenuPerks(ICS2Gangs gangs, IGangsService gangService, Gang gang
         menu = new ChatMenu($"{gang.Name} - Perks");
         menu.AddMenuOption($"Balance: {gang.Credits}", emptyAction(), true);
 
-        menu.AddMenuOption($"Gang Chat - {(gang.Chat ? "Owned" : gangs.Config.GangChatCost + " Credits")}", generateCommandAction($"css_gangpurchase 1"), gang.Credits < gangs.Config.GangChatCost || gang.Chat);
+        menu.AddMenuOption($"Gang Chat - {(gang.Chat ? "Owned (!gc)" : gangs.Config.GangChatCost + " Credits")}", generateCommandAction($"css_gangpurchase 1"), gang.Credits < gangs.Config.GangChatCost || gang.Chat);
+        //Expand Gang Size (10/25) - 1000 Credits
+        int cost = gangs.Config.GangExpandInitialCost + gangs.Config.GangExpandCostPerLevel * (gang.MaxSize - gangs.Config.InitialGangSize);
+        menu.AddMenuOption($"Expand Gang Size ({gang.MaxSize}/{gangs.Config.MaxGangSize}) - {(gang.MaxSize == gangs.Config.MaxGangSize ? "Maxed" : cost + "Credits")}", generateCommandAction($"css_gangpurchase 2"), gang.Credits < cost || gang.MaxSize >= gangs.Config.MaxGangSize);
         return menu;
     }
 

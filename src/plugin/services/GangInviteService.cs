@@ -64,7 +64,7 @@ public class GangInviteService : IGangInviteService
         return;
     }
 
-    public void AcceptInvite(CCSPlayerController invitee, GangPlayer inviteeGangPlayer, string? gangName)
+    public async void AcceptInvite(CCSPlayerController invitee, GangPlayer inviteeGangPlayer, string? gangName)
     {
         GangInvite? invite = null;
         if(gangName == null) {
@@ -90,13 +90,30 @@ public class GangInviteService : IGangInviteService
         if (invite == null)
         {
             Server.NextFrame(() => {
-                CS2Gangs.Logger.LogInformation($"Invite not found for {inviteeGangPlayer.PlayerName} to join {gangName!}");
                 invitee.PrintLocalizedChat(CS2Gangs.GetBase().Localizer, "command_gangjoin_not_found", gangName!);
             });
             return;
         }
 
         gangName = invite.gangName;
+
+        Gang? gang = await CS2Gangs.GetGangsService().GetGang(invite.gangId);
+        if (gang == null)
+        {
+            Server.NextFrame(() => {
+                CS2Gangs.Logger.LogError($"Found null when trying to load the gang {inviteeGangPlayer.PlayerName} was invited join ({gangName})");
+                invitee.PrintLocalizedChat(CS2Gangs.GetBase().Localizer, "command_error", "An error occured when trying to load the gang you attempted to join!");
+            });
+            return;
+        }
+
+        if (gang.MaxSize <= (await CS2Gangs.GetGangsService().GetGangMembers(gang.Id)).Count())
+        {
+            Server.NextFrame(() => {
+                invitee.PrintLocalizedChat(CS2Gangs.GetBase().Localizer, "command_error", $"{gangName} has reached the max amount of members!");
+            });
+            return;
+        }
 
         GangInvites.Remove(invite);
 

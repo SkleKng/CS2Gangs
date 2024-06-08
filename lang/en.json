@@ -10,6 +10,7 @@
   "command_gangleave_success": "%prefix% {green}You have left {0}!",
   "command_gangdisband_success": "%prefix% {green}You have disbanded {0}!",
   "command_setcredits_success": "%prefix% {green}Set {0}'s credits to {1}",
+  "command_clearcache_success": "%prefix% {green}Cleared the gang cache!",
   "command_credits": "%prefix% {white}You have {green}{0} {white}credits!",
   "command_credits_other": "%prefix% {white}{0} has {green}{1} {white}credits!",
   "command_gangdemote_success": "%prefix% {green}Demoted {0} to Member!",
